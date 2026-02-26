@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازی همستر - پنل ادمین</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', system-ui, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .balance {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Admin Login */
+        .admin-login {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 400px;
+            margin: 50px auto;
+        }
+
+        .admin-login h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .admin-login input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .admin-login button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Game Section */
+        .game-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .hamster-container {
+            margin: 30px 0;
+        }
+
+        #hamster {
+            width: 200px;
+            height: 200px;
+            cursor: pointer;
+            transition: transform 0.1s;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
+        }
+
+        #hamster:active {
+            transform: scale(0.95);
+        }
+
+        .click-effect {
+            position: absolute;
+            pointer-events: none;
+            color: gold;
+            font-weight: bold;
+            animation: floatUp 1s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+        }
+
+        /* Gift Code Section */
+        .gift-code-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f6f9fc 0%, #e6f0f5 100%);
+            border-radius: 15px;
+        }
+
+        .gift-input {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .gift-input input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .gift-input button {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #34e89e 0%, #0f3443 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Tables */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .edit-input {
+            width: 80px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            margin: 0 2px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .ban-btn {
+            background: #ff4757;
+            color: white;
+        }
+
+        .unban-btn {
+            background: #26de81;
+            color: white;
+        }
+
+        .save-btn {
+            background: #4b7bec;
+            color: white;
+        }
+
+        .edit-btn {
+            background: #f39c12;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #eb4d4b;
+            color: white;
+        }
+
+        /* Forms */
+        .admin-form {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="balance" id="balanceDisplay">سکه: 0</div>
+        <div class="nav-links">
+            <button class="nav-btn" onclick="showSection('game')">بازی</button>
+            <button class="nav-btn" onclick="showSection('leaderboard')">جدول امتیازات</button>
+            <button class="nav-btn" onclick="showAdminLogin()">پنل ادمین</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Game Section -->
+        <div id="gameSection" class="game-section">
+            <h1>به همستر خوش آمدید!</h1>
+            <div class="hamster-container">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23f1c40f'/%3E%3Ccircle cx='30' cy='40' r='8' fill='black'/%3E%3Ccircle cx='70' cy='40' r='8' fill='black'/%3E%3Ccircle cx='38' cy='38' r='3' fill='white'/%3E%3Ccircle cx='62' cy='38' r='3' fill='white'/%3E%3Cpath d='M35 60 Q50 75 65 60' stroke='black' stroke-width='4' fill='none'/%3E%3C/svg%3E" 
+                     alt="Hamster" id="hamster" onclick="clickHamster(event)">
+            </div>
+            <p>روی همستر کلیک کن تا سکه جمع کنی!</p>
+
+            <div class="gift-code-section">
+                <h3>کد هدیه</h3>
+                <div class="gift-input">
+                    <input type="text" id="giftCode" placeholder="کد هدیه را وارد کنید">
+                    <button onclick="redeemGiftCode()">دریافت جایزه</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Section -->
+        <div id="leaderboardSection" class="game-section hidden">
+            <h2>جدول امتیازات</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>رتبه</th>
+                            <th>نام کاربری</th>
+                            <th>سکه</th>
+                            <th>وضعیت</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Admin Login Modal -->
+        <div id="adminLoginModal" class="modal hidden">
+            <div class="modal-content">
+                <h2>ورود ادمین</h2>
+                <input type="password" id="adminPassword" placeholder="کد ادمین را وارد کنید">
+                <button onclick="checkAdminLogin()">ورود</button>
+                <button class="close-btn" onclick="closeAdminLogin()">بستن</button>
+            </div>
+        </div>
+
+        <!-- Admin Panel -->
+        <div id="adminSection" class="game-section hidden">
+            <h2>پنل مدیریت</h2>
+            
+            <!-- Gift Code Form -->
+            <div class="admin-form">
+                <h3>ساخت کد هدیه جدید</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>نام کد:</label>
+                        <input type="text" id="codeName" placeholder="مثلا: WELCOME100">
+                    </div>
+                    <div class="form-group">
+                        <label>تعداد سکه:</label>
+                        <input type="number" id="codeCoins" value="100">
+                    </div>
+                    <div class="form-group">
+                        <label>تعداد استفاده:</label>
+                        <input type="number" id="codeUses" value="10">
+                    </div>
+                </div>
+                <button class="submit-btn" onclick="createGiftCode()">ساخت کد هدیه</button>
+            </div>
+
+            <!-- Gift Codes List -->
+            <div class="table-container">
+                <h3>کدهای هدیه موجود</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>کد</th>
+                            <th>سکه</th>
+                            <th>استفاده شده</th>
+                            <th>حداکثر استفاده</th>
+                            <th>وضعیت</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="giftCodesBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Users List -->
+            <div class="table-container">
+                <h3>لیست کاربران</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>شناسه</th>
+                            <th>نام کاربری</th>
+                            <th>سکه</th>
+                            <th>وضعیت</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Constants
+        const ADMIN_HASH = "52c97694fa813870b537913460338c8c58475cd319f6c1074c8e326b601a573b";
+        
+        // State
+        let currentUser = null;
+        let isAdmin = false;
+
+        // Initialize
+        function init() {
+            // Load or create user
+            let users = getUsers();
+            let userId = localStorage.getItem('userId');
+            
+            if (!userId) {
+                userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('userId', userId);
+                
+                users.push({
+                    id: userId,
+                    username: 'کاربر ' + users.length,
+                    coins: 0,
+                    isBanned: false
+                });
+                saveUsers(users);
+            }
+            
+            currentUser = users.find(u => u.id === userId);
+            if (!currentUser) {
+                // Create new user if not found
+                currentUser = {
+                    id: userId,
+                    username: 'کاربر ' + users.length,
+                    coins: 0,
+                    isBanned: false
+                };
+                users.push(currentUser);
+                saveUsers(users);
+            }
+            
+            updateBalance();
+            updateLeaderboard();
+        }
+
+        // Storage functions
+        function getUsers() {
+            return JSON.parse(localStorage.getItem('users')) || [];
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        function getGiftCodes() {
+            return JSON.parse(localStorage.getItem('giftCodes')) || [];
+        }
+
+        function saveGiftCodes(codes) {
+            localStorage.setItem('giftCodes', JSON.stringify(codes));
+        }
+
+        // UI Functions
+        function showSection(section) {
+            document.getElementById('gameSection').classList.add('hidden');
+            document.getElementById('leaderboardSection').classList.add('hidden');
+            document.getElementById('adminSection').classList.add('hidden');
+            
+            if (section === 'game') {
+                document.getElementById('gameSection').classList.remove('hidden');
+            } else if (section === 'leaderboard') {
+                document.getElementById('leaderboardSection').classList.remove('hidden');
+                updateLeaderboard();
+            } else if (section === 'admin' && isAdmin) {
+                document.getElementById('adminSection').classList.remove('hidden');
+                updateAdminPanel();
+            }
+        }
+
+        function showAdminLogin() {
+            document.getElementById('adminLoginModal').classList.remove('hidden');
+        }
+
+        function closeAdminLogin() {
+            document.getElementById('adminLoginModal').classList.add('hidden');
+        }
+
+        async function checkAdminLogin() {
+            const password = document.getElementById('adminPassword').value;
+            
+            // Convert password to hash (simple SHA-256 simulation)
+            const hash = await simpleHash(password);
+            
+            if (hash === ADMIN_HASH) {
+                isAdmin = true;
+                closeAdminLogin();
+                showSection('admin');
+                updateAdminPanel();
+            } else {
+                alert('کد ادمین incorrect!');
+            }
+        }
+
+        // Simple hash function (for demo purposes)
+        async function simpleHash(text) {
+            const msgBuffer = new TextEncoder().encode(text);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // Game Functions
+        function clickHamster(event) {
+            if (currentUser.isBanned) {
+                alert('شما بن شده‌اید!');
+                return;
+            }
+            
+            // Add coins
+            currentUser.coins += 1;
+            
+            // Update users
+            let users = getUsers();
+            let userIndex = users.findIndex(u => u.id === currentUser.id);
+            if (userIndex !== -1) {
+                users[userIndex].coins = currentUser.coins;
+                saveUsers(users);
+            }
+            
+            // Update display
+            updateBalance();
+            
+            // Create click effect
+            const effect = document.createElement('div');
+            effect.className = 'click-effect';
+            effect.textContent = '+1';
+            effect.style.left = (event.clientX - 20) + 'px';
+            effect.style.top = (event.clientY - 30) + 'px';
+            document.body.appendChild(effect);
+            
+            setTimeout(() => effect.remove(), 1000);
+        }
+
+        function updateBalance() {
+            document.getElementById('balanceDisplay').textContent = `سکه: ${currentUser.coins}`;
+        }
+
+        // Gift Code Functions
+        async function redeemGiftCode() {
+            if (currentUser.isBanned) {
+                alert('شما بن شده‌اید!');
+                return;
+            }
+            
+            const code = document.getElementById('giftCode').value.trim();
+            if (!code) return;
+            
+            let codes = getGiftCodes();
+            let giftCode = codes.find(c => c.name === code);
+            
+            if (!giftCode) {
+                alert('کد نامعتبر است!');
+                return;
+            }
+            
+            if (giftCode.usedCount >= giftCode.maxUses) {
+                alert('این کد منقضی شده است!');
+                return;
+            }
+            
+            // Check if user already used this code
+            if (giftCode.usedBy && giftCode.usedBy.includes(currentUser.id)) {
+                alert('شما قبلاً از این کد استفاده کرده‌اید!');
+                return;
+            }
+            
+            // Apply gift
+            currentUser.coins += giftCode.coins;
+            giftCode.usedCount = (giftCode.usedCount || 0) + 1;
+            
+            if (!giftCode.usedBy) giftCode.usedBy = [];
+            giftCode.usedBy.push(currentUser.id);
+            
+            // Save changes
+            let users = getUsers();
+            let userIndex = users.findIndex(u => u.id === currentUser.id);
+            if (userIndex !== -1) {
+                users[userIndex].coins = currentUser.coins;
+                saveUsers(users);
+            }
+            
+            saveGiftCodes(codes);
+            
+            updateBalance();
+            alert(`تبریک! شما ${giftCode.coins} سکه دریافت کردید.`);
+            document.getElementById('giftCode').value = '';
+            
+            if (isAdmin) updateAdminPanel();
+        }
+
+        // Admin Functions
+        function createGiftCode() {
+            const name = document.getElementById('codeName').value.trim();
+            const coins = parseInt(document.getElementById('codeCoins').value);
+            const uses = parseInt(document.getElementById('codeUses').value);
+            
+            if (!name || !coins || !uses) {
+                alert('لطفاً همه فیلدها را پر کنید!');
+                return;
+            }
+            
+            let codes = getGiftCodes();
+            
+            if (codes.find(c => c.name === name)) {
+                alert('این کد قبلاً وجود دارد!');
+                return;
+            }
+            
+            codes.push({
+                name: name,
+                coins: coins,
+                maxUses: uses,
+                usedCount: 0,
+                usedBy: []
+            });
+            
+            saveGiftCodes(codes);
+            updateAdminPanel();
+            
+            // Clear form
+            document.getElementById('codeName').value = '';
+            document.getElementById('codeCoins').value = '100';
+            document.getElementById('codeUses').value = '10';
+        }
+
+        function editGiftCode(oldName, newName, coins, maxUses) {
+            let codes = getGiftCodes();
+            let code = codes.find(c => c.name === oldName);
+            
+            if (code) {
+                if (oldName !== newName && codes.find(c => c.name === newName)) {
+                    alert('این نام کد قبلاً وجود دارد!');
+                    return;
+                }
+                
+                code.name = newName;
+                code.coins = parseInt(coins);
+                code.maxUses = parseInt(maxUses);
+                
+                saveGiftCodes(codes);
+                updateAdminPanel();
+            }
+        }
+
+        function deleteGiftCode(name) {
+            if (confirm('آیا از حذف این کد اطمینان دارید؟')) {
+                let codes = getGiftCodes();
+                codes = codes.filter(c => c.name !== name);
+                saveGiftCodes(codes);
+                updateAdminPanel();
+            }
+        }
+
+        function toggleBanUser(userId) {
+            let users = getUsers();
+            let user = users.find(u => u.id === userId);
+            
+            if (user) {
+                user.isBanned = !user.isBanned;
+                saveUsers(users);
+                
+                if (currentUser.id === userId) {
+                    currentUser.isBanned = user.isBanned;
+                }
+                
+                updateAdminPanel();
+                updateLeaderboard();
+            }
+        }
+
+        function updateUserCoins(userId, newCoins) {
+            let users = getUsers();
+            let user = users.find(u => u.id === userId);
+            
+            if (user) {
+                user.coins = parseInt(newCoins);
+                saveUsers(users);
+                
+                if (currentUser.id === userId) {
+                    currentUser.coins = user.coins;
+                    updateBalance();
+                }
+                
+                updateAdminPanel();
+                updateLeaderboard();
+            }
+        }
+
+        // Update Functions
+        function updateLeaderboard() {
+            const users = getUsers();
+            const sorted = users
+                .filter(u => !u.isBanned)
+                .sort((a, b) => b.coins - a.coins)
+                .slice(0, 10);
+            
+            let html = '';
+            sorted.forEach((user, index) => {
+                html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${user.username}</td>
+                        <td>${user.coins}</td>
+                        <td>${user.isBanned ? 'بن شده' : 'فعال'}</td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('leaderboardBody').innerHTML = html;
+        }
+
+        function updateAdminPanel() {
+            if (!isAdmin) return;
+            
+            // Update users table
+            const users = getUsers();
+            let usersHtml = '';
+            users.forEach(user => {
+                usersHtml += `
+                    <tr>
+                        <td>${user.id.substring(0, 8)}...</td>
+                        <td>
+                            <span>${user.username}</span>
+                            <input type="text" value="${user.username}" class="edit-input" id="username_${user.id}" style="display:none;">
+                        </td>
+                        <td>
+                            <span id="coins_${user.id}_display">${user.coins}</span>
+                            <input type="number" value="${user.coins}" class="edit-input" id="coins_${user.id}_edit" style="display:none;">
+                        </td>
+                        <td>${user.isBanned ? 'بن شده' : 'فعال'}</td>
+                        <td>
+                            <button class="action-btn edit-btn" onclick="editUser('${user.id}')">ویرایش</button>
+                            <button class="action-btn save-btn" onclick="saveUser('${user.id}')" style="display:none;" id="save_${user.id}">ذخیره</button>
+                            <button class="action-btn ${user.isBanned ? 'unban-btn' : 'ban-btn'}" onclick="toggleBanUser('${user.id}')">
+                                ${user.isBanned ? 'رفع بن' : 'بن'}
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            document.getElementById('usersBody').innerHTML = usersHtml;
+
+            // Update gift codes table
+            const codes = getGiftCodes();
+            let codesHtml = '';
+            codes.forEach(code => {
+                const isActive = code.usedCount < code.maxUses;
+                codesHtml += `
+                    <tr>
+                        <td>
+                            <span id="code_${code.name}_display">${code.name}</span>
+                            <input type="text" value="${code.name}" class="edit-input" id="code_${code.name}_edit" style="display:none;">
+                        </td>
+                        <td>
+                            <span id="coins_${code.name}_display">${code.coins}</span>
+                            <input type="number" value="${code.coins}" class="edit-input" id="coins_${code.name}_edit" style="display:none;">
+                        </td>
+                        <td>${code.usedCount}</td>
+                        <td>
+                            <span id="maxUses_${code.name}_display">${code.maxUses}</span>
+                            <input type="number" value="${code.maxUses}" class="edit-input" id="maxUses_${code.name}_edit" style="display:none;">
+                        </td>
+                        <td style="color: ${isActive ? 'green' : 'red'}">${isActive ? 'فعال' : 'منقضی'}</td>
+                        <td>
+                            <button class="action-btn edit-btn" onclick="editGiftCodeRow('${code.name}')">ویرایش</button>
+                            <button class="action-btn save-btn" onclick="saveGiftCode('${code.name}')" style="display:none;" id="saveCode_${code.name}">ذخیره</button>
+                            <button class="action-btn delete-btn" onclick="deleteGiftCode('${code.name}')">حذف</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            document.getElementById('giftCodesBody').innerHTML = codesHtml;
+        }
+
+        // Edit functions for admin panel
+        function editUser(userId) {
+            document.getElementById(`username_${userId}`).style.display = 'inline-block';
+            document.getElementById(`coins_${userId}_edit`).style.display = 'inline-block';
+            document.getElementById(`save_${userId}`).style.display = 'inline-block';
+            
+            // Hide display elements
+            document.getElementById(`coins_${userId}_display`).style.display = 'none';
+        }
+
+        function saveUser(userId) {
+            const newUsername = document.getElementById(`username_${userId}`).value;
+            const newCoins = document.getElementById(`coins_${userId}_edit`).value;
+            
+            let users = getUsers();
+            let user = users.find(u => u.id === userId);
+            
+            if (user) {
+                user.username = newUsername;
+                user.coins = parseInt(newCoins);
+                saveUsers(users);
+                
+                if (currentUser.id === userId) {
+                    currentUser.username = newUsername;
+                    currentUser.coins = user.coins;
+                    updateBalance();
+                }
+            }
+            
+            // Reset display
+            document.getElementById(`username_${userId}`).style.display = 'none';
+            document.getElementById(`coins_${userId}_edit`).style.display = 'none';
+            document.getElementById(`save_${userId}`).style.display = 'none';
+            document.getElementById(`coins_${userId}_display`).style.display = 'inline';
+            
+            updateAdminPanel();
+            updateLeaderboard();
+        }
+
+        function editGiftCodeRow(codeName) {
+            document.getElementById(`code_${codeName}_edit`).style.display = 'inline-block';
+            document.getElementById(`coins_${codeName}_edit`).style.display = 'inline-block';
+            document.getElementById(`maxUses_${codeName}_edit`).style.display = 'inline-block';
+            document.getElementById(`saveCode_${codeName}`).style.display = 'inline-block';
+            
+            // Hide display elements
+            document.getElementById(`code_${codeName}_display`).style.display = 'none';
+            document.getElementById(`coins_${codeName}_display`).style.display = 'none';
+            document.getElementById(`maxUses_${codeName}_display`).style.display = 'none';
+        }
+
+        function saveGiftCode(oldName) {
+            const newName = document.getElementById(`code_${oldName}_edit`).value;
+            const newCoins = document.getElementById(`coins_${oldName}_edit`).value;
+            const newMaxUses = document.getElementById(`maxUses_${oldName}_edit`).value;
+            
+            editGiftCode(oldName, newName, newCoins, newMaxUses);
+        }
+
+        // Start the game
+        init();
+    </script>
+</body>
+  </html>
