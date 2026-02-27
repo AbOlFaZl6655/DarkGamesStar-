@@ -1,13 +1,1001 @@
-here<!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
 <head>
-<title>DarkGamesStar</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DarkGamesStar | بازی دو بعدی</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a472a 0%, #2d5a3a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #main-container {
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            max-height: 800px;
+            background: #16213e;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+            border: 3px solid #4a6b3f;
+        }
+
+        /* صفحه انتخاب */
+        .screen {
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .selection-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a472a 0%, #2d5a3a 100%);
+            height: 100%;
+        }
+
+        .selection-screen h1 {
+            color: white;
+            margin-bottom: 30px;
+            font-size: 36px;
+            text-shadow: 3px 3px 0 #2a5a2a;
+        }
+
+        .selection-btn {
+            width: 100%;
+            padding: 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            border: 2px solid white;
+        }
+
+        .game-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .panel-btn {
+            background: #ff9800;
+            color: white;
+        }
+
+        /* صفحه بازی */
+        .game-screen {
+            background: #16213e;
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .game-header {
+            background: #0f3460;
+            color: white;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e94560;
+        }
+
+        .player-info {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .player-info span {
+            color: #e94560;
+            font-weight: bold;
+        }
+
+        .settings-icon {
+            width: 35px;
+            height: 35px;
+            background: #1a1a2e;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border: 2px solid #e94560;
+            color: #e94560;
+            font-size: 18px;
+        }
+
+        .game-world {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: repeating-linear-gradient(45deg, #2d5a3a, #2d5a3a 20px, #3a6b4a 20px, #3a6b4a 40px);
+            background-size: 56px 56px;
+        }
+
+        .game-world::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 30%);
+            pointer-events: none;
+        }
+
+        .map-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 28px;
+            font-weight: bold;
+            text-shadow: 3px 3px 0 #1a472a, 5px 5px 0 rgba(0,0,0,0.3);
+            z-index: 10;
+            pointer-events: none;
+            white-space: nowrap;
+            background: rgba(0,0,0,0.3);
+            padding: 15px 25px;
+            border-radius: 50px;
+            border: 2px solid rgba(255,255,255,0.5);
+            letter-spacing: 2px;
+        }
+
+        #player {
+            width: 40px;
+            height: 40px;
+            background: #e94560;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 10px;
+            transition: all 0.1s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 20;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .job-badge {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            white-space: nowrap;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            color: white;
+        }
+
+        .joystick-area {
+            height: 120px;
+            background: #0f3460;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top: 2px solid #e94560;
+        }
+
+        .joystick {
+            width: 80px;
+            height: 80px;
+            background: #1a1a2e;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border: 3px solid #e94560;
+            color: white;
+            font-size: 14px;
+            user-select: none;
+            touch-action: none;
+        }
+
+        /* مودال رمز */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 350px;
+            text-align: center;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        /* پنل سازنده */
+        .panel-screen {
+            background: #f5f5f5;
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .panel-header {
+            background: #333;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-btn {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .panel-tabs {
+            display: flex;
+            background: #444;
+            padding: 10px;
+            gap: 10px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #666;
+            color: white;
+            font-weight: bold;
+        }
+
+        .tab-btn.active {
+            background: #e94560;
+        }
+
+        .panel-content {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .stat-card .number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e94560;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .users-list {
+            margin-top: 20px;
+        }
+
+        .user-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .user-id {
+            background: #e94560;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        .detail-row {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            gap: 10px;
+        }
+
+        .detail-row label {
+            width: 60px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .detail-row input, .detail-row select {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .color-picker {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .save-btn {
+            flex: 1;
+            padding: 8px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .ban-btn {
+            flex: 1;
+            padding: 8px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .inspector-btn {
+            flex: 1;
+            padding: 8px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .inspector-panel {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #2196F3;
+        }
+
+        .banned-user-item {
+            background: #fff3f3;
+            border-right: 3px solid #f44336;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+        }
+
+        .jobs-panel {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .job-section {
+            margin-bottom: 20px;
+        }
+
+        .job-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .player-tag {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 3px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        .error-msg {
+            color: #f44336;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
 </head>
 <body>
+    <div id="main-container">
+        <!-- صفحه انتخاب -->
+        <div id="selectionScreen" class="screen selection-screen">
+            <h1>🎮 DarkGamesStar</h1>
+            <button onclick="showGame()" class="selection-btn game-btn">🎮 ورود به بازی</button>
+            <button onclick="showPanelModal()" class="selection-btn panel-btn">⚙️ پنل سازنده</button>
+        </div>
 
-<h1>سایت رسمی تیم بازی سازی DarkGamesStar</h1>
-<p>کانال روبیکا = @DarkGamesStar 
-  ایدی مالک =@Abolo_NOW</p>
+        <!-- صفحه بازی -->
+        <div id="gameScreen" class="screen game-screen"></div>
 
+        <!-- صفحه پنل سازنده -->
+        <div id="panelScreen" class="screen panel-screen">
+            <div class="panel-header">
+                <h2>⚙️ پنل سازنده</h2>
+                <button class="back-btn" onclick="backToMain()">بازگشت</button>
+            </div>
+            
+            <div class="panel-tabs">
+                <button class="tab-btn active" onclick="switchPanelTab('users')">👥 بازیکنان</button>
+                <button class="tab-btn" onclick="switchPanelTab('inspector')">👁️ بازرسی</button>
+                <button class="tab-btn" onclick="switchPanelTab('jobs')">💼 شغل‌ها</button>
+            </div>
+
+            <div class="panel-content">
+                <!-- تب بازیکنان -->
+                <div id="usersTab" class="tab-content active">
+                    <div class="stats-cards">
+                        <div class="stat-card">
+                            <div>کل بازیکنان</div>
+                            <div class="number" id="totalPlayers">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div>آنلاین</div>
+                            <div class="number" id="onlinePlayers">0</div>
+                        </div>
+                    </div>
+
+                    <input type="text" id="searchUser" class="search-box" placeholder="🔍 جستجو..." onkeyup="searchUsers()">
+                    <div id="usersList" class="users-list"></div>
+                </div>
+
+                <!-- تب بازرسی -->
+                <div id="inspectorTab" class="tab-content">
+                    <div class="inspector-panel">
+                        <h3 style="margin-bottom: 15px;">👁️ پنل بازرسی</h3>
+                        <div id="inspectorContent" class="banned-users-list"></div>
+                    </div>
+                </div>
+
+                <!-- تب شغل‌ها -->
+                <div id="jobsTab" class="tab-content">
+                    <div class="jobs-panel">
+                        <h3 style="margin-bottom: 15px;">📊 آمار شغل‌ها</h3>
+                        <div id="jobsContent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- مودال رمز -->
+    <div id="panelModal" class="modal">
+        <div class="modal-content">
+            <h3>🔐 ورود به پنل سازنده</h3>
+            <input type="password" id="panelPassword" class="search-box" placeholder="رمز را وارد کنید">
+            <button onclick="checkPanelPassword()" class="save-btn" style="margin: 10px 0;">تایید</button>
+            <button onclick="hidePanelModal()" class="ban-btn">انصراف</button>
+            <div id="passwordError" class="error-msg"></div>
+        </div>
+    </div>
+
+    <!-- مودال اطلاعات کاربر -->
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <h3>👤 اطلاعات کاربر</h3>
+            <p>🆔 شناسه: <span id="infoId"></span></p>
+            <p>💰 سکه: <span id="infoCoin"></span></p>
+            <p>💼 شغل: <span id="infoJob"></span></p>
+            <p>👑 پنل: <span id="infoPanel"></span></p>
+            <button onclick="hideInfoModal()" class="save-btn">باشه</button>
+        </div>
+    </div>
+
+    <script>
+        const HASHED_PASSWORD = "52c97694fa813870b537913460338c8c58475cd319f6c1074c8e326b601a573b";
+        
+        let users = JSON.parse(localStorage.getItem('game_users')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('current_user')) || null;
+        let customJobs = JSON.parse(localStorage.getItem('custom_jobs')) || {};
+
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function generateUniqueId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let id;
+            do {
+                id = '';
+                for (let i = 0; i < 5; i++) {
+                    id += chars[Math.floor(Math.random() * chars.length)];
+                }
+            } while (users.some(u => u.id === id));
+            return id;
+        }
+
+        function getJobColor(job) {
+            if (job === 'بیکار') return '#f44336';
+            if (job === 'آشپز') return '#4CAF50';
+            if (job === 'کارمند') return '#2196F3';
+            return customJobs[job] || '#9C27B0';
+        }
+
+        function showGame() {
+            document.getElementById('selectionScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'flex';
+            document.getElementById('panelScreen').style.display = 'none';
+            
+            if (currentUser) {
+                const user = users.find(u => u.id === currentUser.id);
+                if (user && !isUserBanned(user)) {
+                    currentUser = user;
+                    startGame();
+                } else {
+                    currentUser = null;
+                    localStorage.removeItem('current_user');
+                    showLoginScreen();
+                }
+            } else {
+                showLoginScreen();
+            }
+        }
+
+        function showLoginScreen() {
+            const gameScreen = document.getElementById('gameScreen');
+            gameScreen.innerHTML = `
+                <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; background: linear-gradient(135deg, #1a472a 0%, #2d5a3a 100%); height: 100%;">
+                    <h2 style="color: white; margin-bottom: 30px; font-size: 32px; text-shadow: 2px 2px 0 #2a5a2a;">🎮 ورود</h2>
+                    <input type="text" id="username" class="search-box" placeholder="نام خود را وارد کنید" style="background: white;">
+                    <button onclick="login()" class="game-btn" style="margin-top: 20px; width: 100%;">شروع بازی</button>
+                </div>
+            `;
+        }
+
+        function login() {
+            const username = document.getElementById('username').value;
+            if (!username) return alert('لطفاً نام خود را وارد کنید!');
+
+            const newUser = {
+                id: generateUniqueId(),
+                name: username,
+                coin: 1000,
+                job: 'بیکار',
+                panel: 'ندارد',
+                banned: false,
+                banUntil: null
+            };
+
+            users.push(newUser);
+            localStorage.setItem('game_users', JSON.stringify(users));
+            
+            currentUser = newUser;
+            localStorage.setItem('current_user', JSON.stringify(currentUser));
+            
+            startGame();
+        }
+
+        function startGame() {
+            const gameScreen = document.getElementById('gameScreen');
+            const jobColor = getJobColor(currentUser.job);
+            
+            gameScreen.innerHTML = `
+                <div class="game-header">
+                    <div class="player-info">
+                        <span>💰 <span id="coinDisplay">${currentUser.coin}</span></span>
+                        <span>🆔 <span id="idDisplay">${currentUser.id}</span></span>
+                    </div>
+                    <div class="settings-icon" onclick="showPlayerInfo()">⚙️</div>
+                </div>
+
+                <div class="game-world" id="gameWorld">
+                    <div class="map-text">DarkGamesStar</div>
+                    <div id="player">
+                        <div class="job-badge" style="background: ${jobColor};">
+                            ${currentUser.job}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="joystick-area">
+                    <div class="joystick" id="joystick">🕹️</div>
+                </div>
+            `;
+            initJoystick();
+        }
+
+        function initJoystick() {
+            const joystick = document.getElementById('joystick');
+            const player = document.getElementById('player');
+            let isDragging = false;
+
+            const movePlayer = (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+
+                const touch = e.touches ? e.touches[0] : e;
+                const gameWorld = document.getElementById('gameWorld');
+                const rect = gameWorld.getBoundingClientRect();
+
+                let x = touch.clientX - rect.left - 20;
+                let y = touch.clientY - rect.top - 20;
+
+                x = Math.max(0, Math.min(rect.width - 40, x));
+                y = Math.max(0, Math.min(rect.height - 40, y));
+
+                player.style.left = x + 'px';
+                player.style.top = y + 'px';
+            };
+
+            joystick.addEventListener('touchstart', (e) => { isDragging = true; e.preventDefault(); });
+            joystick.addEventListener('mousedown', (e) => { isDragging = true; e.preventDefault(); });
+            document.addEventListener('touchmove', movePlayer);
+            document.addEventListener('mousemove', movePlayer);
+            document.addEventListener('touchend', () => { isDragging = false; });
+            document.addEventListener('mouseup', () => { isDragging = false; });
+        }
+
+        function showPlayerInfo() {
+            if (!currentUser) return;
+            document.getElementById('infoId').textContent = currentUser.id;
+            document.getElementById('infoCoin').textContent = currentUser.coin;
+            document.getElementById('infoJob').textContent = currentUser.job;
+            document.getElementById('infoPanel').textContent = currentUser.panel;
+            document.getElementById('infoModal').style.display = 'flex';
+        }
+
+        function hideInfoModal() {
+            document.getElementById('infoModal').style.display = 'none';
+        }
+
+        function showPanel() {
+            document.getElementById('selectionScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('panelScreen').style.display = 'flex';
+            updatePanelData();
+        }
+
+        function backToMain() {
+            document.getElementById('selectionScreen').style.display = 'flex';
+            document.getElementById('panelScreen').style.display = 'none';
+        }
+
+        function switchPanelTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            if (tab === 'users') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('usersTab').classList.add('active');
+                updateUsersList();
+            } else if (tab === 'inspector') {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('inspectorTab').classList.add('active');
+                updateInspectorPanel();
+            } else if (tab === 'jobs') {
+                document.querySelectorAll('.tab-btn')[2].classList.add('active');
+                document.getElementById('jobsTab').classList.add('active');
+                updateJobsPanel();
+            }
+        }
+
+        function showPanelModal() {
+            document.getElementById('panelModal').style.display = 'flex';
+            document.getElementById('panelPassword').value = '';
+            document.getElementById('passwordError').style.display = 'none';
+        }
+
+        function hidePanelModal() {
+            document.getElementById('panelModal').style.display = 'none';
+        }
+
+        async function checkPanelPassword() {
+            const password = document.getElementById('panelPassword').value;
+            const hash = await sha256(password);
+            
+            if (hash === HASHED_PASSWORD) {
+                hidePanelModal();
+                showPanel();
+            } else {
+                document.getElementById('passwordError').style.display = 'block';
+                document.getElementById('passwordError').textContent = 'رمز اشتباه است!';
+            }
+        }
+
+        function isUserBanned(user) {
+            return user.banned && new Date(user.banUntil) > new Date();
+        }
+
+        function updatePanelData() {
+            const total = users.length;
+            const online = users.filter(u => !isUserBanned(u)).length;
+            
+            document.getElementById('totalPlayers').textContent = total;
+            document.getElementById('onlinePlayers').textContent = online;
+            
+            updateUsersList();
+            updateInspectorPanel();
+            updateJobsPanel();
+        }
+
+        function searchUsers() {
+            updateUsersList();
+        }
+
+        function updateUsersList() {
+            const usersList = document.getElementById('usersList');
+            const searchTerm = document.getElementById('searchUser')?.value.toLowerCase() || '';
+            
+            usersList.innerHTML = '';
+
+            const filteredUsers = users.filter(user => 
+                user.name.toLowerCase().includes(searchTerm) || 
+                user.id.toLowerCase().includes(searchTerm)
+            );
+
+            filteredUsers.forEach((user) => {
+                const userIndex = users.findIndex(u => u.id === user.id);
+                
+                const userCard = document.createElement('div');
+                userCard.className = 'user-card';
+                
+                userCard.innerHTML = `
+                    <div class="user-header">
+                        <span class="user-id">${user.id}</span>
+                        <span class="user-name">${user.name}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label>💰 سکه</label>
+                        <input type="number" id="coin_${userIndex}" value="${user.coin}">
+                    </div>
+                    <div class="detail-row">
+                        <label>💼 شغل</label>
+                        <input type="text" id="job_${userIndex}" value="${user.job}" placeholder="نام شغل" style="flex: 2;">
+                        <input type="color" id="color_${userIndex}" class="color-picker" value="${getJobColor(user.job)}" style="flex: 0;">
+                    </div>
+                    <div class="detail-row">
+                        <label>👑 پنل</label>
+                        <select id="panel_${userIndex}">
+                            <option value="ندارد" ${user.panel === 'ندارد' ? 'selected' : ''}>ندارد</option>
+                            <option value="بازرس" ${user.panel === 'بازرس' ? 'selected' : ''}>بازرس</option>
+                            <option value="ویژه" ${user.panel === 'ویژه' ? 'selected' : ''}>ویژه</option>
+                            <option value="پشتیبان" ${user.panel === 'پشتیبان' ? 'selected' : ''}>پشتیبان</option>
+                            <option value="ادمین" ${user.panel === 'ادمین' ? 'selected' : ''}>ادمین</option>
+                        </select>
+                    </div>
+                    <div class="user-actions">
+                        <button class="save-btn" onclick="saveUserChanges(${userIndex})">💾 ذخیره</button>
+                        <button class="ban-btn" onclick="banUser(${userIndex})">🔨 بن</button>
+                    </div>
+                `;
+                usersList.appendChild(userCard);
+            });
+        }
+
+        function saveUserChanges(index) {
+            const coin = document.getElementById(`coin_${index}`).value;
+            const job = document.getElementById(`job_${index}`).value;
+            const color = document.getElementById(`color_${index}`).value;
+            const panel = document.getElementById(`panel_${index}`).value;
+
+            if (job !== 'بیکار' && job !== 'آشپز' && job !== 'کارمند') {
+                customJobs[job] = color;
+                localStorage.setItem('custom_jobs', JSON.stringify(customJobs));
+            }
+
+            users[index].coin = parseInt(coin);
+            users[index].job = job;
+            users[index].panel = panel;
+
+            localStorage.setItem('game_users', JSON.stringify(users));
+            
+            alert('تغییرات ذخیره شد!');
+            
+            if (currentUser && currentUser.id === users[index].id) {
+                currentUser = users[index];
+                localStorage.setItem('current_user', JSON.stringify(currentUser));
+                if (document.getElementById('coinDisplay')) {
+                    document.getElementById('coinDisplay').textContent = currentUser.coin;
+                    const jobBadge = document.querySelector('.job-badge');
+                    if (jobBadge) {
+                        jobBadge.textContent = currentUser.job;
+                        jobBadge.style.background = getJobColor(currentUser.job);
+                    }
+                }
+            }
+
+            updateJobsPanel();
+        }
+
+        function banUser(index) {
+            const hours = prompt('مدت زمان بن (ساعت):', '24');
+            if (!hours) return;
+            
+            const banUntil = new Date();
+            banUntil.setHours(banUntil.getHours() + parseInt(hours));
+            
+            users[index].banned = true;
+            users[index].banUntil = banUntil.toISOString();
+
+            localStorage.setItem('game_users', JSON.stringify(users));
+            
+            alert(`کاربر ${users[index].name} بن شد!`);
+            
+            if (currentUser && currentUser.id === users[index].id) {
+                currentUser = null;
+                localStorage.removeItem('current_user');
+            }
+            
+            updatePanelData();
+        }
+
+        function updateInspectorPanel() {
+            const inspectorContent = document.getElementById('inspectorContent');
+            const bannedUsers = users.filter(u => isUserBanned(u));
+            
+            if (bannedUsers.length === 0) {
+                inspectorContent.innerHTML = '<p style="color: #666; text-align: center;">هیچ کاربر بن شده‌ای وجود ندارد</p>';
+                return;
+            }
+
+            let html = '<h4 style="margin-bottom: 15px;">🚫 لیست کاربران بن شده:</h4>';
+            
+            bannedUsers.forEach(user => {
+                const until = new Date(user.banUntil).toLocaleString('fa-IR');
+                html += `
+                    <div class="banned-user-item">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span><strong>${user.name}</strong></span>
+                            <span class="user-id">${user.id}</span>
+                        </div>
+                        <div style="font-size: 12px; margin-top: 5px; color: #f44336;">
+                            ⏰ تا ${until}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            inspectorContent.innerHTML = html;
+        }
+
+        function updateJobsPanel() {
+            const jobsContent = document.getElementById('jobsContent');
+            
+            const defaultJobs = [
+                { name: 'بیکار', color: '#f44336' },
+                { name: 'آشپز', color: '#4CAF50' },
+                { name: 'کارمند', color: '#2196F3' }
+            ];
+            
+            let html = '';
+
+            defaultJobs.forEach(job => {
+                const players = users.filter(u => u.job === job.name);
+                html += `
+                    <div class="job-section">
+                        <div class="job-title" style="background: ${job.color};">
+                            <span>${job.name}</span>
+                            <span style="background: rgba(255,255,255,0.3); padding: 3px 10px; border-radius: 20px;">${players.length}</span>
+                        </div>
+                        <div class="job-list" style="margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 5px;">
+                            ${players.map(p => `<span class="player-tag">${p.name}</span>`).join('') || '<span style="color: #999;">بازیکنی وجود ندارد</span>'}
+                        </div>
+                    </div>
+                `;
+            });
+
+            const customJobsList = Object.keys(customJobs);
+            if (customJobsList.length > 0) {
+                html += '<h4 style="margin: 20px 0 10px;">✨ شغل‌های سفارشی:</h4>';
+                
+                customJobsList.forEach(job => {
+                    const players = users.filter(u => u.job === job);
+                    if (players.length > 0) {
+                        html += `
+                            <div class="job-section">
+                                <div class="job-title" style="background: ${customJobs[job]};">
+                                    <span>${job}</span>
+                                    <span style="background: rgba(255,255,255,0.3); padding: 3px 10px; border-radius: 20px;">${players.length}</span>
+                                </div>
+                                <div class="job-list" style="margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 5px;">
+                                    ${players.map(p => `<span class="player-tag">${p.name}</span>`).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+            }
+
+            jobsContent.innerHTML = html || '<p style="color: #666; text-align: center;">هیچ شغلی وجود ندارد</p>';
+        }
+
+        window.onclick = function(event) {
+            const panelModal = document.getElementById('panelModal');
+            const infoModal = document.getElementById('infoModal');
+            
+            if (event.target == panelModal) hidePanelModal();
+            if (event.target == infoModal) hideInfoModal();
+        }
+    </script>
 </body>
 </html>
