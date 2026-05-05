@@ -2,1204 +2,973 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DarkGamesStar | بازی دو بعدی</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>StArK GAMES - KM Coin Clicker</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
-
         body {
-            background: #1a472a;
+            font-family: system-ui, 'Segoe UI', 'Roboto', sans-serif;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 16px;
+            transition: background 0.3s ease, color 0.2s;
         }
-
-        .game-wrapper {
-            width: 100%;
-            max-width: 400px;
-            height: 100vh;
-            max-height: 800px;
-            background: #16213e;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            border: 3px solid #4a6b3f;
+        body.light-mode {
+            background: radial-gradient(circle at 10% 20%, #e0eaf5, #c0d0e0);
+            color: #1a2a3a;
         }
-
-        /* ===== صفحات ===== */
-        .page {
-            width: 100%;
-            height: 100%;
-            display: none;
-            flex-direction: column;
+        body.dark-mode {
+            background: radial-gradient(circle at 20% 30%, #1e2a3a, #0a0f18);
+            color: #f0f0f0;
         }
-
-        .page.active {
-            display: flex;
-        }
-
-        /* ===== صفحه اصلی ===== */
-        .home-page {
-            background: linear-gradient(135deg, #1a472a, #2d5a3a);
-            justify-content: center;
-            align-items: center;
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 56px;
             padding: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.2s;
         }
-
-        .home-page h1 {
-            color: white;
-            font-size: 36px;
-            margin-bottom: 40px;
-            text-shadow: 3px 3px 0 #2a5a2a;
+        body.dark-mode .container {
+            background: rgba(0,0,0,0.45);
+            border-color: rgba(255,255,255,0.15);
         }
-
-        /* ===== دکمه‌ها ===== */
-        .btn {
-            width: 100%;
+        .brand {
+            text-align: center;
+            color: #f5b042;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0 #b45f1b;
+            margin-bottom: 4px;
+        }
+        .game-title {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 500;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        .auth-panel, .info-panel, .settings-panel, .exchange-panel, .minigame-panel, .admin-panel, .spin-panel {
+            background: rgba(0,0,0,0.2);
+            border-radius: 40px;
             padding: 20px;
-            margin: 10px 0;
+            margin-bottom: 20px;
+            backdrop-filter: blur(8px);
+            transition: all 0.2s;
+        }
+        body.dark-mode .auth-panel, body.dark-mode .info-panel, 
+        body.dark-mode .settings-panel, body.dark-mode .exchange-panel,
+        body.dark-mode .minigame-panel, body.dark-mode .admin-panel,
+        body.dark-mode .spin-panel {
+            background: rgba(0,0,0,0.5);
+        }
+        input, select, button {
+            width: 100%;
+            padding: 14px 18px;
+            margin: 8px 0;
             border: none;
-            border-radius: 15px;
-            font-size: 20px;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-family: inherit;
+            background: rgba(255,255,255,0.85);
+            text-align: center;
+            transition: transform 0.05s ease, background 0.2s;
+        }
+        button:active { transform: scale(0.97); }
+        input:focus, select:focus { outline: none; background: white; }
+        button {
+            background: #f0a34b;
             font-weight: bold;
+            color: #2c2c2c;
             cursor: pointer;
-            transition: transform 0.2s;
-            border: 2px solid white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-
-        .btn-primary { background: #4CAF50; color: white; }
-        .btn-warning { background: #ff9800; color: white; }
-        .btn-danger { background: #f44336; color: white; }
-        .btn-success { background: #4CAF50; color: white; }
-        .btn-info { background: #2196F3; color: white; }
-        .btn-small { padding: 10px; font-size: 14px; }
-
-        /* ===== صفحه ورود ===== */
-        .login-page {
-            background: linear-gradient(135deg, #1a472a, #2d5a3a);
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .login-title {
-            color: white;
-            font-size: 32px;
-            margin-bottom: 30px;
-            text-shadow: 2px 2px 0 #2a5a2a;
-        }
-
-        .input-field {
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            border: 2px solid #0f3460;
-            border-radius: 10px;
-            font-size: 16px;
-            background: white;
-        }
-
-        /* ===== صفحه بازی ===== */
-        .game-page {
-            background: #16213e;
-        }
-
-        .game-header {
-            background: #0f3460;
-            color: white;
-            padding: 10px 15px;
+        .auto-login-btn { background: #2e7d32 !important; color: white !important; }
+        .info-bar {
+            background: rgba(0,0,0,0.5);
+            border-radius: 60px;
+            padding: 12px 18px;
+            margin-bottom: 20px;
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #e94560;
-        }
-
-        .player-stats {
-            display: flex;
-            gap: 15px;
-            font-size: 14px;
-        }
-
-        .player-stats span {
-            color: #e94560;
-            font-weight: bold;
-        }
-
-        .header-buttons {
-            display: flex;
             gap: 10px;
+            font-weight: 600;
+            color: #ffd966;
+            backdrop-filter: blur(4px);
         }
-
-        .icon-btn {
-            width: 35px;
-            height: 35px;
-            background: #1a1a2e;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .info-item {
+            background: #2a3a4a;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.85rem;
             cursor: pointer;
-            border: 2px solid #e94560;
-            color: #e94560;
-            font-size: 18px;
+            transition: 0.1s;
         }
-
-        /* محیط بازی */
-        .game-world {
-            flex: 1;
+        .info-item:active { transform: scale(0.96); background: #3a5a6a; }
+        .click-circle {
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle at 30% 30%, #8cc9ff, #3a8cff);
+            border-radius: 50%;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.3), inset 0 2px 5px rgba(255,255,255,0.6);
+            cursor: pointer;
+            transition: transform 0.05s linear, background 0.1s;
             position: relative;
             overflow: hidden;
-            background: repeating-linear-gradient(45deg, #2d5a3a, #2d5a3a 20px, #3a6b4a 20px, #3a6b4a 40px);
         }
-
-        .map-center-text {
+        .click-circle:active { transform: scale(0.96); }
+        .click-circle.disabled-circle {
+            background: radial-gradient(circle at 30% 30%, #e05a5a, #a02020);
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+        .ripple {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 24px;
-            font-weight: bold;
-            text-shadow: 2px 2px 0 #1a472a, 4px 4px 0 rgba(0,0,0,0.3);
-            background: rgba(0,0,0,0.4);
-            padding: 12px 20px;
-            border-radius: 40px;
-            border: 2px solid rgba(255,255,255,0.5);
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        /* کاراکتر بازی */
-        .game-character {
-            width: 40px;
-            height: 40px;
-            background: #e94560;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            z-index: 20;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-
-        .character-name {
-            position: absolute;
-            top: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #0f3460;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 10px;
-            white-space: nowrap;
-            border: 1px solid #e94560;
-        }
-
-        .job-label {
-            position: absolute;
-            top: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 4px 12px;
-            border-radius: 20px;
-            color: white;
-            font-size: 11px;
-            white-space: nowrap;
-            border: 2px solid white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            cursor: pointer;
-        }
-
-        .character-id {
-            font-size: 8px;
-            color: rgba(255,255,255,0.7);
-        }
-
-        /* جویستیک */
-        .joystick-area {
-            height: 120px;
-            background: #0f3460;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-top: 2px solid #e94560;
-        }
-
-        .joystick {
-            width: 80px;
-            height: 80px;
-            background: #1a1a2e;
             border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            border: 3px solid #e94560;
-            color: white;
-            user-select: none;
-            touch-action: none;
+            background: rgba(255,255,255,0.6);
+            transform: scale(0);
+            animation: rippleAnim 0.5s linear;
+            pointer-events: none;
         }
-
-        /* پنل بازرسی درون بازی */
-        .inspector-game-panel {
-            background: #0f3460;
-            border-top: 2px solid #e94560;
+        @keyframes rippleAnim { to { transform: scale(4); opacity: 0; } }
+        .msg {
+            background: #ffdd99;
+            color: #aa4c00;
             padding: 10px;
-            display: none;
-        }
-
-        .inspector-game-panel.active {
-            display: block;
-        }
-
-        .inspector-header {
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .inspector-list {
-            max-height: 150px;
-            overflow-y: auto;
-        }
-
-        .inspector-item {
-            background: #1a1a2e;
-            color: white;
-            padding: 8px;
-            margin-bottom: 5px;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 12px;
-            border-right: 3px solid #2196F3;
-        }
-
-        .inspector-remove {
-            background: #f44336;
-            color: white;
-            border: none;
-            padding: 3px 8px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 10px;
-        }
-
-        .copy-btn {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 2px 8px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 10px;
-            margin-right: 5px;
-        }
-
-        /* ===== پنل سازنده ===== */
-        .panel-page {
-            background: #f5f5f5;
-        }
-
-        .panel-header {
-            background: #333;
-            color: white;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .panel-tabs {
-            display: flex;
-            background: #444;
-            padding: 10px;
-            gap: 10px;
-        }
-
-        .tab-button {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            background: #666;
-            color: white;
-            font-weight: bold;
-        }
-
-        .tab-button.active {
-            background: #e94560;
-        }
-
-        .panel-content {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-        }
-
-        .panel-tab {
-            display: none;
-        }
-
-        .panel-tab.active {
-            display: block;
-        }
-
-        /* کارت آمار */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
+            border-radius: 50px;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin: 15px 0;
+            font-size: 0.85rem;
+            font-weight: 500;
         }
-
-        .stat-number {
-            font-size: 24px;
-            font-weight: bold;
-            color: #e94560;
-        }
-
-        /* جستجو */
-        .search-box {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-        }
-
-        /* لیست کاربران */
-        .users-list {
-            margin-top: 20px;
-        }
-
-        .user-card {
-            background: white;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            border-right: 4px solid #4CAF50;
-        }
-
-        .user-card.inspector {
-            border-right-color: #2196F3;
-        }
-
-        .user-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            padding-bottom: 5px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .user-id {
-            background: #e94560;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 5px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .input-row {
-            display: flex;
-            align-items: center;
-            margin: 8px 0;
-            gap: 10px;
-        }
-
-        .input-row label {
-            width: 60px;
-            font-size: 12px;
-            color: #666;
-        }
-
-        .input-row input, .input-row select {
-            flex: 1;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .color-picker {
-            width: 40px;
-            height: 40px;
-        }
-
         .action-buttons {
             display: flex;
+            flex-wrap: wrap;
             gap: 10px;
-            margin-top: 10px;
+            margin-top: 20px;
         }
-
-        /* مودال */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 350px;
-            text-align: center;
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 10px 0;
-            padding: 8px;
-            background: #f5f5f5;
-            border-radius: 5px;
-        }
-
-        /* پنل شغل‌ها */
-        .jobs-panel {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-        }
-
-        .job-section {
-            margin-bottom: 20px;
-        }
-
-        .job-header {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
-            border-radius: 10px;
+        .action-buttons button {
+            flex: 1;
+            background: #3a5a6a;
             color: white;
             font-weight: bold;
         }
-
-        .player-tag {
-            display: inline-block;
-            padding: 5px 10px;
-            margin: 3px;
-            background: #f0f0f0;
-            border-radius: 15px;
-            font-size: 12px;
+        .hidden { display: none; }
+        .wheel-container {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 20px auto;
         }
-
-        .error-text {
-            color: #f44336;
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            transition: transform 5s cubic-bezier(0.2, 0.9, 0.1, 1.05);
+            box-shadow: 0 0 0 6px #f5c542, 0 0 0 12px #f5a020;
+        }
+        .wheel-sector {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+            left: 0;
+            top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            text-shadow: 0 0 3px black;
+            background: rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+        .wheel-pointer {
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            border-top: 38px solid gold;
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));
+            z-index: 10;
+        }
+        .timer-text {
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 12px;
+            font-weight: bold;
+            color: gold;
+        }
+        .minigame-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            background: #2c4b66;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .tab-btn.active {
+            background: #f0a34b;
+            color: #2c2c2c;
+        }
+        .minigame-content {
             margin-top: 10px;
-            display: none;
+        }
+        .quiz-question {
+            font-size: 1.2rem;
+            text-align: center;
+            margin: 12px 0;
+            font-weight: 600;
+            background: rgba(0,0,0,0.3);
+            padding: 12px;
+            border-radius: 30px;
+        }
+        .answer-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+        .answer-buttons button {
+            flex: 1;
+            background: #2c4b66;
+            color: white;
+        }
+        .admin-table-container {
+            overflow-x: auto;
+            max-height: 300px;
+            scroll-behavior: smooth;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.7rem; color: #ddd; background: rgba(0,0,0,0.3); border-radius: 20px; }
+        th, td { padding: 8px 4px; border-bottom: 1px solid #888; text-align: center; }
+        .support-content { text-align: center; line-height: 2; font-size: 0.95rem; }
+        .close-panel { background: #aa2e2e; color: white; border: none; border-radius: 30px; padding: 6px 12px; cursor: pointer; margin-top: 10px; }
+        .stat-line { background: rgba(0,0,0,0.4); margin: 12px 0; padding: 12px; border-radius: 40px; text-align: center; font-size: 1.1rem; font-weight: 600; color: gold; }
+        .admin-controls { display: flex; flex-wrap: wrap; gap: 8px; }
+        .admin-controls input, .admin-controls button { flex: 1; min-width: 100px; padding: 8px; border-radius: 30px; }
+        /* پیام‌های مخصوص مینی‌گیم */
+        .msg-win {
+            background: #2e7d32 !important;
+            color: white !important;
+            font-weight: bold;
+            border-radius: 50px;
+            padding: 12px;
+            animation: pulse 0.5s ease;
+        }
+        .msg-lose {
+            background: #c62828 !important;
+            color: white !important;
+            font-weight: bold;
+            border-radius: 50px;
+            padding: 12px;
+            animation: shake 0.3s ease;
+        }
+        .msg-draw {
+            background: #ff9800 !important;
+            color: #2c2c2c !important;
+            font-weight: bold;
+            border-radius: 50px;
+            padding: 12px;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.02); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+            100% { transform: translateX(0); }
         }
     </style>
 </head>
 <body>
-    <div class="game-wrapper">
-        <!-- ===== صفحه اصلی ===== -->
-        <div id="homePage" class="page home-page active">
-            <h1>🎮 DarkGamesStar</h1>
-            <button class="btn btn-primary" onclick="gameUI.showGame()">🎮 ورود به بازی</button>
-            <button class="btn btn-warning" onclick="gameUI.showPanelModal()">⚙️ پنل سازنده</button>
+<div class="container" id="app">
+    <div class="brand">✨ StArK GAMES ✨</div>
+    <div class="game-title" id="gameTitle">KM Coin Clicker</div>
+
+    <div id="authSection" class="auth-panel">
+        <button id="createAutoAccountBtn" class="auto-login-btn" data-key="createAccountBtn">🎲 ساخت حساب جدید (خودکار)</button>
+        <div style="margin-top:20px; border-top:1px solid rgba(255,255,255,0.3); padding-top:15px;">
+            <p id="loginPrompt" style="text-align:center; font-size:0.8rem; opacity:0.8;" data-key="loginPrompt">قبلاً حساب دارید؟ با شناسه و رمز وارد شوید</p>
+            <input type="text" id="loginId" placeholder="شناسه (حروف کوچک)">
+            <input type="password" id="loginPass" placeholder="رمز عبور">
+            <button id="loginBtn" data-key="loginBtn">🚪 ورود دستی</button>
         </div>
+        <div id="authMsg" class="msg hidden"></div>
+    </div>
 
-        <!-- ===== صفحه ورود به بازی ===== -->
-        <div id="loginPage" class="page login-page">
-            <h2 class="login-title">🎮 ورود</h2>
-            <input type="text" id="usernameInput" class="input-field" placeholder="نام خود را وارد کنید">
-            <button class="btn btn-primary" onclick="gameUI.login()">شروع بازی</button>
-            <button class="btn btn-danger" onclick="gameUI.backToHome()">بازگشت</button>
+    <div id="gameSection" class="hidden">
+        <div class="info-bar">
+            <span class="info-item" id="playerIdBox">🆔 <span id="playerId">---</span></span>
+            <span class="info-item" id="playerPassBox">🔑 <span id="playerPass">---</span></span>
+            <span class="info-item"><span data-key="kmLabel">🪙 KM:</span> <span id="kmCount">0</span></span>
+            <span class="info-item"><span data-key="flLabel">💎 FL:</span> <span id="flCount">0</span></span>
         </div>
-
-        <!-- ===== صفحه بازی ===== -->
-        <div id="gamePage" class="page game-page">
-            <div class="game-header">
-                <div class="player-stats">
-                    <span>💰 <span id="coinDisplay">0</span></span>
-                    <span>🆔 <span id="idDisplay">------</span></span>
-                </div>
-                <div class="header-buttons">
-                    <div class="icon-btn" onclick="gameUI.showPlayerInfo()">👤</div>
-                    <div class="icon-btn" onclick="gameUI.toggleInspectorPanel()" id="inspectorToggle" style="display: none;">👁️</div>
-                </div>
-            </div>
-
-            <div class="game-world" id="gameWorld">
-                <div class="map-center-text">DarkGamesStar</div>
-                <div class="game-character" id="player">
-                    <div class="character-name" id="playerNameDisplay"></div>
-                    <div class="job-label" id="jobDisplay" onclick="gameUI.copyId()">بیکار</div>
-                    <div class="character-id" id="idDisplay2"></div>
-                </div>
-            </div>
-
-            <div class="joystick-area">
-                <div class="joystick" id="joystick">🕹️</div>
-            </div>
-
-            <!-- پنل بازرسی درون بازی -->
-            <div id="inspectorGamePanel" class="inspector-game-panel">
-                <div class="inspector-header">
-                    <span>👁️ پنل بازرسی</span>
-                    <button class="btn-small btn-danger" onclick="gameUI.hideInspectorPanel()">✕</button>
-                </div>
-                <div class="inspector-list" id="inspectorList">
-                    <!-- لیست بازرس‌ها -->
-                </div>
-            </div>
+        <div class="info-bar">
+            <span class="info-item"><span data-key="remainingLabel">⚡ کلیک این ساعت:</span> <span id="clicksLeft">0</span></span>
+            <span class="info-item"><span data-key="nextClickLabel">⌛ بعدی:</span> <span id="resetTimer">--:--</span></span>
+            <span class="info-item"><span data-key="totalClicksLabel">📊 کلیک کل:</span> <span id="totalClicks">0</span></span>
         </div>
-
-        <!-- ===== صفحه پنل سازنده ===== -->
-        <div id="panelPage" class="page panel-page">
-            <div class="panel-header">
-                <h2>⚙️ پنل سازنده</h2>
-                <button class="btn btn-danger" onclick="gameUI.backToHome()" style="padding: 5px 15px;">بازگشت</button>
-            </div>
-            
-            <div class="panel-tabs">
-                <button class="tab-button active" onclick="gameUI.switchPanelTab('users')">👥 بازیکنان</button>
-                <button class="tab-button" onclick="gameUI.switchPanelTab('inspectors')">👁️ بازرس‌ها</button>
-                <button class="tab-button" onclick="gameUI.switchPanelTab('jobs')">💼 شغل‌ها</button>
-            </div>
-
-            <div class="panel-content">
-                <!-- تب بازیکنان -->
-                <div id="usersTab" class="panel-tab active">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div>کل بازیکنان</div>
-                            <div class="stat-number" id="totalPlayers">0</div>
-                        </div>
-                        <div class="stat-card">
-                            <div>آنلاین</div>
-                            <div class="stat-number" id="onlinePlayers">0</div>
-                        </div>
-                    </div>
-
-                    <input type="text" id="searchUser" class="search-box" placeholder="🔍 جستجو..." onkeyup="gameUI.searchUsers()">
-                    <div id="usersList" class="users-list"></div>
-                </div>
-
-                <!-- تب بازرس‌ها -->
-                <div id="inspectorsTab" class="panel-tab">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div>تعداد بازرس‌ها</div>
-                            <div class="stat-number" id="totalInspectors">0</div>
-                        </div>
-                        <div class="stat-card">
-                            <div>فعال</div>
-                            <div class="stat-number" id="activeInspectors">0</div>
-                        </div>
-                    </div>
-                    <div id="inspectorsList" class="users-list"></div>
-                </div>
-
-                <!-- تب شغل‌ها -->
-                <div id="jobsTab" class="panel-tab">
-                    <div class="jobs-panel">
-                        <h3 style="margin-bottom: 15px;">📊 آمار شغل‌ها</h3>
-                        <div id="jobsContent"></div>
-                    </div>
-                </div>
-            </div>
+        <div class="info-bar">
+            <span class="info-item"><span data-key="playTimeLabel">🕒 زمان بازی:</span> <span id="playTime">0</span> <span data-key="secondsLabel">ثانیه</span></span>
+        </div>
+        <div id="clickCircle" class="click-circle">💰<br><span id="clickCircleText" data-key="clickCircleText">کلیک کن</span></div>
+        <div id="clickMsg" class="msg"></div>
+        <div class="action-buttons">
+            <button id="showInfoBtn" data-key="infoBtn">📊 اطلاعات</button>
+            <button id="showSpinBtn" data-key="spinBtn">🎡 گردونه</button>
+            <button id="showMiniGameBtn" data-key="minigameBtn">🎮 مینی‌گیم</button>
+            <button id="showExchangeBtn" data-key="exchangeBtn">🔄 تبدیل</button>
+            <button id="showAdminBtn" data-key="adminBtn">👑 ادمین</button>
+            <button id="showSettingsBtn" data-key="settingsBtn">⚙️ تنظیمات</button>
+            <button id="showSupportBtn" data-key="supportBtn">📞 پشتیبانی</button>
         </div>
     </div>
 
-    <!-- ===== مودال رمز پنل ===== -->
-    <div id="panelModal" class="modal">
-        <div class="modal-content">
-            <h3>🔐 ورود به پنل سازنده</h3>
-            <input type="password" id="panelPassword" class="input-field" placeholder="رمز را وارد کنید">
-            <button class="btn btn-success" onclick="gameUI.checkPanelPassword()" style="margin: 10px 0;">تایید</button>
-            <button class="btn btn-danger" onclick="gameUI.hidePanelModal()">انصراف</button>
-            <div id="passwordError" class="error-text"></div>
+    <div id="infoPanel" class="info-panel hidden">
+        <div style="display:flex; justify-content:space-between"><h4 data-key="infoTitle">📊 اطلاعات</h4><button id="closeInfoBtn" class="close-panel">✖</button></div>
+        <div class="stat-line"><span data-key="totalTimeLabel">🎮 کل زمان:</span> <span id="infoTotalTime">0</span> <span data-key="secondsLabel2">ثانیه</span></div>
+        <div class="stat-line"><span data-key="totalClicksInfoLabel">🖱️ کلیک کل:</span> <span id="infoTotalClicks">0</span></div>
+        <div class="stat-line"><span data-key="kmInfoLabel">💰 کل KM:</span> <span id="infoKmTotal">0</span></div>
+        <div class="stat-line"><span data-key="flInfoLabel">💎 کل FL:</span> <span id="infoFlTotal">0</span></div>
+    </div>
+
+    <div id="settingsPanel" class="settings-panel hidden">
+        <div style="display:flex; justify-content:space-between"><h4 data-key="settingsTitle">⚙️ تنظیمات</h4><button id="closeSettingsBtn" class="close-panel">✖</button></div>
+        <div style="margin:10px 0"><label data-key="themeLabel">🌓 تم:</label><select id="themeSelect"><option value="light">روشن</option><option value="dark">تاریک</option></select></div>
+        <div style="margin:10px 0"><label data-key="languageLabel">🌐 زبان:</label><select id="languageSelect"><option value="fa">فارسی</option><option value="en">English</option></select></div>
+        <button id="saveSettingsBtn" data-key="saveSettingsBtn">💾 ذخیره</button>
+        <button id="resetSettingsBtn" style="background:#ff9800; margin-top:5px;" data-key="resetSettingsBtn">🔄 پیش‌فرض</button>
+    </div>
+
+    <div id="supportPanel" class="auth-panel hidden">
+        <div style="display:flex; justify-content:space-between"><h4 data-key="supportTitle">📞 پشتیبانی</h4><button id="closeSupportBtn" class="close-panel">✖</button></div>
+        <div class="support-content" data-key="supportContent">🎮 روبیکا: @Old_Dixon<br>⏰ ساعات کاری: ۵ صبح تا ۱۲ شب</div>
+    </div>
+
+    <div id="exchangePanel" class="exchange-panel hidden">
+        <div style="display:flex; justify-content:space-between"><h4 data-key="exchangeTitle">🔄 تبدیل ارز</h4><button id="closeExchangeBtn" class="close-panel">✖</button></div>
+        <div><label data-key="convertKmToFlLabel">🪙 KM→FL (1000:1)</label><input type="number" id="convertKmAmount" placeholder="KM"><button id="doConvertKmToFlBtn">تبدیل</button></div>
+        <div style="margin-top:10px"><label data-key="convertFlToKmLabel">💎 FL→KM (1:700)</label><input type="number" id="convertFlAmount" placeholder="FL"><button id="doConvertFlToKmBtn">تبدیل</button></div>
+        <div id="exchangeMsg" class="msg"></div>
+    </div>
+
+    <!-- مینی‌گیم‌ها -->
+    <div id="minigamePanel" class="minigame-panel hidden">
+        <div style="display:flex; justify-content:space-between; align-items:center;"><h4 data-key="minigameTitle">🎮 مینی‌گیم‌ها</h4><button id="closeMinigameBtn" class="close-panel">✖</button></div>
+        <div class="minigame-tabs">
+            <button id="tabRPS" class="tab-btn active" data-tab="rps">🪨 سنگ کاغذ قیچی</button>
+            <button id="tabQuiz" class="tab-btn" data-tab="quiz">❓ سوال و جواب</button>
+        </div>
+        <div id="rpsContent" class="minigame-content">
+            <div style="text-align:center; margin:10px 0" data-key="minigameCost">💰 هزینه: 100 KM | 🏆 برد: 300 KM</div>
+            <div class="choice-buttons" style="display:flex; gap:10px"><button id="choiceRock" data-key="rock">🪨 سنگ</button><button id="choicePaper" data-key="paper">📄 کاغذ</button><button id="choiceScissors" data-key="scissors">✂️ قیچی</button></div>
+            <div id="minigameResult" class="msg"></div>
+        </div>
+        <div id="quizContent" class="minigame-content hidden">
+            <div style="text-align:center; margin:10px 0" data-key="quizCost">💰 هر سوال: 1 FL | ✅ پاسخ صحیح: 10 FL</div>
+            <div id="quizQuestion" class="quiz-question"></div>
+            <div id="quizAnswers" class="answer-buttons"></div>
+            <div id="quizResult" class="msg"></div>
+            <button id="newQuestionBtn" class="hidden" data-key="newQuestionBtn">❓ سوال جدید</button>
         </div>
     </div>
 
-    <!-- ===== مودال اطلاعات کاربر ===== -->
-    <div id="infoModal" class="modal">
-        <div class="modal-content">
-            <h3>👤 اطلاعات کاربر</h3>
-            <div class="info-row">
-                <span>🆔 شناسه:</span>
-                <span><strong id="infoId"></strong> <button class="copy-btn" onclick="gameUI.copyInfoId()">کپی</button></span>
-            </div>
-            <div class="info-row">
-                <span>💰 سکه:</span>
-                <span id="infoCoin"></span>
-            </div>
-            <div class="info-row">
-                <span>💼 شغل:</span>
-                <span id="infoJob"></span>
-            </div>
-            <div class="info-row">
-                <span>👑 پنل:</span>
-                <span id="infoPanel"></span>
-            </div>
-            <button class="btn btn-success" onclick="gameUI.hideInfoModal()" style="margin-top: 15px;">باشه</button>
-        </div>
+    <div id="spinPanel" class="spin-panel hidden">
+        <div style="display:flex; justify-content:space-between"><h4 data-key="spinTitle">🎡 گردونه روزانه</h4><button id="closeSpinBtn" class="close-panel">✖</button></div>
+        <div class="wheel-container"><div class="wheel-pointer"></div><div class="wheel" id="wheel"></div></div>
+        <button id="doSpinBtn" class="spin-btn" data-key="doSpinBtn">🎡 چرخاندن</button>
+        <div id="spinTimer" class="timer-text"></div>
+        <div id="spinResult" class="msg"></div>
     </div>
 
-    <script>
-        const gameUI = {
-            HASHED_PASSWORD: "52c97694fa813870b537913460338c8c58475cd319f6c1074c8e326b601a573b",
-            
-            users: JSON.parse(localStorage.getItem('game_users')) || [],
-            currentUser: JSON.parse(localStorage.getItem('current_user')) || null,
-            customJobs: JSON.parse(localStorage.getItem('custom_jobs')) || {},
-            inspectorLogs: JSON.parse(localStorage.getItem('inspector_logs')) || [],
+    <div id="adminPanel" class="admin-panel hidden">
+        <div style="display:flex; justify-content:space-between"><h4 data-key="adminTitle">👑 مدیریت</h4><button id="closeAdminBtn" class="close-panel">✖</button></div>
+        <div class="admin-controls">
+            <input type="text" id="adminTargetUser" placeholder="شناسه">
+            <input type="number" id="adminAddKm" placeholder="افزودن KM"><button id="adminAddKmBtn">➕</button>
+            <input type="number" id="adminRemoveKm" placeholder="کم کردن KM"><button id="adminRemoveKmBtn">➖</button>
+            <input type="number" id="adminAddFl" placeholder="افزودن FL"><button id="adminAddFlBtn">💎+</button>
+            <input type="number" id="adminRemoveFl" placeholder="کم کردن FL"><button id="adminRemoveFlBtn">💎-</button>
+            <button id="adminResetSpinBtn">🔄 ریست چرخش (کاربر)</button>
+            <button id="adminResetAllSpinBtn">🔄 ریست همه چرخش‌ها</button>
+            <button id="adminBanUserBtn">🔨 بن</button>
+            <button id="adminUnbanUserBtn">✅ رفع بن</button>
+        </div>
+        <div class="admin-table-container"><div id="adminTableContainer"></div></div>
+        <div id="adminMsg" class="msg"></div>
+    </div>
+</div>
 
-            // ===== توابع کمکی =====
-            async sha256(message) {
-                const msgBuffer = new TextEncoder().encode(message);
-                const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-                const hashArray = Array.from(new Uint8Array(hashBuffer));
-                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-            },
+<script>
+    // -------------------- دیکشنری ترجمه (فارسی و انگلیسی) --------------------
+    const translations = {
+        fa: {
+            gameTitle:"KM Coin Clicker", createAccountBtn:"🎲 ساخت حساب جدید (خودکار)", loginPrompt:"قبلاً حساب دارید؟ با شناسه و رمز وارد شوید", loginBtn:"🚪 ورود دستی",
+            kmLabel:"🪙 KM:", flLabel:"💎 FL:", remainingLabel:"⚡ کلیک این ساعت:", nextClickLabel:"⌛ بعدی:", totalClicksLabel:"📊 کلیک کل:", playTimeLabel:"🕒 زمان بازی:", secondsLabel:"ثانیه",
+            clickCircleText:"کلیک کن", infoBtn:"📊 اطلاعات", settingsBtn:"⚙️ تنظیمات", supportBtn:"📞 پشتیبانی", exchangeBtn:"🔄 تبدیل", minigameBtn:"🎮 مینی‌گیم", spinBtn:"🎡 گردونه",
+            adminBtn:"👑 ادمین", infoTitle:"📊 اطلاعات", closeBtn:"✖", totalTimeLabel:"🎮 کل زمان:", secondsLabel2:"ثانیه", totalClicksInfoLabel:"🖱️ کلیک کل:",
+            kmInfoLabel:"💰 کل KM:", flInfoLabel:"💎 کل FL:", settingsTitle:"⚙️ تنظیمات", themeLabel:"🌓 تم:", themeLight:"روشن", themeDark:"تاریک", languageLabel:"🌐 زبان:",
+            saveSettingsBtn:"💾 ذخیره", resetSettingsBtn:"🔄 پیش‌فرض", supportTitle:"📞 پشتیبانی", supportContent:"🎮 روبیکا: @Old_Dixon<br>⏰ ساعات کاری: ۵ صبح تا ۱۲ شب",
+            exchangeTitle:"🔄 تبدیل ارز", convertKmToFlLabel:"🪙 KM→FL (1000:1)", convertFlToKmLabel:"💎 FL→KM (1:700)", convertKmToFlBtn:"تبدیل", convertFlToKmBtn:"تبدیل",
+            minigameTitle:"🎮 مینی‌گیم‌ها", minigameCost:"💰 هزینه: 100 KM | 🏆 برد: 300 KM", rock:"🪨 سنگ", paper:"📄 کاغذ", scissors:"✂️ قیچی",
+            quizCost:"💰 هر سوال: 1 FL | ✅ پاسخ صحیح: 10 FL", newQuestionBtn:"❓ سوال جدید",
+            spinTitle:"🎡 گردونه روزانه", doSpinBtn:"🎡 چرخاندن", spinTimerLabel:"زمان تا چرخش بعدی:",
+            adminTitle:"👑 مدیریت",
+            exchangeSuccess:"✅ تبدیل شد!", exchangeError:"❌ خطا", minigameInsufficient:"⚠️ KM کافی نیست!",
+            spinRewardFL:(a)=>`🎉 ${a} FL بردید!`, spinRewardKM:(a)=>`🎉 ${a} KM بردید!`, spinExtra:"🎁 شانس مجدد!", spinNothing:"😞 هیچی نگرفتید!",
+            spinDailyLimit:"⏳ صبر کنید: ", spinResetAdmin:"چرخش ریست شد.",
+            clickWait:"⏳ یک لحظه...", accountBanned:"⛔ مسدود!", hourlyLimitReached:"⛔ محدودیت ساعتی", coinEarned:"✨ +1 KM! ✨", readyNext:"✅ آماده",
+            settingsSaved:"ذخیره شد", settingsReset:"پیش‌فرض شد", copyId:"شناسه کپی شد", copyPass:"رمز کپی شد",
+            accountCreated:(id,pass)=>`✅ حساب ساخته شد! شناسه: ${id}  رمز: ${pass}`, welcome:(id)=>`🎉 خوش آمدی ${id}!`, welcomeBack:(id)=>`خوش برگشتی ${id}!`,
+            autoLoginWelcome:(id)=>`خوش برگشتی ${id}! (خودکار)`, invalidCredentials:"شناسه یا رمز اشتباه", enterCredentials:"لطفا وارد شوید", inactiveBan:"⛔ ۱ ماه بی‌فعالی", userBanned:"⛔ مسدود",
+            copySuccess:(t)=>`📋 ${t} کپی شد!`, copyIdText:"شناسه", copyPassText:"رمز", defaultMsg:"💎 روی دایره بزن تا KM بگیری 💎"
+        },
+        en: {
+            gameTitle:"KM Coin Clicker", createAccountBtn:"🎲 Create Account", loginPrompt:"Login with ID & password", loginBtn:"🚪 Login",
+            kmLabel:"🪙 KM:", flLabel:"💎 FL:", remainingLabel:"⚡ Clicks left:", nextClickLabel:"⌛ Next click:", totalClicksLabel:"📊 Total clicks:", playTimeLabel:"🕒 Play time:", secondsLabel:"sec",
+            clickCircleText:"Click", infoBtn:"📊 Stats", settingsBtn:"⚙️ Settings", supportBtn:"📞 Support", exchangeBtn:"🔄 Exchange", minigameBtn:"🎮 Mini Games", spinBtn:"🎡 Wheel",
+            adminBtn:"👑 Admin", infoTitle:"📊 Stats", closeBtn:"✖", totalTimeLabel:"🎮 Total time:", secondsLabel2:"sec", totalClicksInfoLabel:"🖱️ Total clicks:",
+            kmInfoLabel:"💰 Total KM:", flInfoLabel:"💎 Total FL:", settingsTitle:"⚙️ Settings", themeLabel:"🌓 Theme:", themeLight:"Light", themeDark:"Dark", languageLabel:"🌐 Language:",
+            saveSettingsBtn:"💾 Save", resetSettingsBtn:"🔄 Reset", supportTitle:"📞 Support", supportContent:"🎮 Rubika: @Old_Dixon<br>⏰ Hours: 5 AM to 12 PM",
+            exchangeTitle:"🔄 Exchange", convertKmToFlLabel:"🪙 KM→FL (1000:1)", convertFlToKmLabel:"💎 FL→KM (1:700)", convertKmToFlBtn:"Convert", convertFlToKmBtn:"Convert",
+            minigameTitle:"🎮 Mini Games", minigameCost:"💰 Cost: 100 KM | 🏆 Win: 300 KM", rock:"🪨 Rock", paper:"📄 Paper", scissors:"✂️ Scissors",
+            quizCost:"💰 Cost:1 FL | ✅ Reward:10 FL", newQuestionBtn:"❓ Next",
+            spinTitle:"🎡 Daily Wheel", doSpinBtn:"🎡 Spin", spinTimerLabel:"Next spin in:",
+            adminTitle:"👑 Admin",
+            exchangeSuccess:"✅ Done", exchangeError:"❌ Error", minigameInsufficient:"⚠️ Not enough KM!",
+            spinRewardFL:(a)=>`🎉 Won ${a} FL!`, spinRewardKM:(a)=>`🎉 Won ${a} KM!`, spinExtra:"🎁 Extra spin!", spinNothing:"😞 Nothing!",
+            spinDailyLimit:"⏳ Wait: ", spinResetAdmin:"Spin reset.",
+            clickWait:"⏳ Wait...", accountBanned:"⛔ Banned!", hourlyLimitReached:"⛔ Hourly limit", coinEarned:"✨ +1 KM! ✨", readyNext:"✅ Ready",
+            settingsSaved:"Saved", settingsReset:"Reset", copyId:"ID copied", copyPass:"Password copied",
+            accountCreated:(id,pass)=>`✅ Created! ID: ${id}  Pass: ${pass}`, welcome:(id)=>`🎉 Welcome ${id}!`, welcomeBack:(id)=>`Welcome back ${id}!`,
+            autoLoginWelcome:(id)=>`Welcome back ${id}! (auto)`, invalidCredentials:"Wrong ID/Pass", enterCredentials:"Please login", inactiveBan:"⛔ 1 month inactive", userBanned:"⛔ Banned",
+            copySuccess:(t)=>`📋 ${t} copied!`, copyIdText:"ID", copyPassText:"Password", defaultMsg:"💎 Tap circle for KM 💎"
+        }
+    };
 
-            generateId() {
-                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-                let id;
-                do {
-                    id = '';
-                    for (let i = 0; i < 5; i++) {
-                        id += chars[Math.floor(Math.random() * chars.length)];
-                    }
-                } while (this.users.some(u => u.id === id));
-                return id;
-            },
+    let players = {}, currentUser = null, sessionStartTime = null, intervalTimer = null, autoSaveTimer = null, canClick = true;
+    const HOURLY_LIMIT = 1000, INACTIVE_DAYS = 30, ADMIN_PASSWORD = "admin123";
+    let currentLang = "fa", adminAuthenticated = false;
 
-            getJobColor(job) {
-                if (job === 'بیکار') return '#f44336';
-                if (job === 'آشپز') return '#4CAF50';
-                if (job === 'کارمند') return '#2196F3';
-                return this.customJobs[job] || '#9C27B0';
-            },
-
-            isUserBanned(user) {
-                return user.banned && new Date(user.banUntil) > new Date();
-            },
-
-            copyToClipboard(text) {
-                navigator.clipboard?.writeText(text).then(() => {
-                    alert('کپی شد: ' + text);
-                }).catch(() => {
-                    prompt('برای کپی، متن را انتخاب کنید:', text);
-                });
-            },
-
-            // ===== ناوبری =====
-            showPage(pageId) {
-                document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-                document.getElementById(pageId).classList.add('active');
-            },
-
-            backToHome() {
-                this.showPage('homePage');
-            },
-
-            // ===== بازی =====
-            showGame() {
-                if (this.currentUser) {
-                    const user = this.users.find(u => u.id === this.currentUser.id);
-                    if (user && !this.isUserBanned(user)) {
-                        this.currentUser = user;
-                        this.startGame();
-                    } else {
-                        this.currentUser = null;
-                        localStorage.removeItem('current_user');
-                        this.showPage('loginPage');
-                    }
-                } else {
-                    this.showPage('loginPage');
-                }
-            },
-
-            login() {
-                const username = document.getElementById('usernameInput').value;
-                if (!username) return alert('لطفاً نام خود را وارد کنید!');
-
-                const newUser = {
-                    id: this.generateId(),
-                    name: username,
-                    coin: 1000,
-                    job: 'بیکار',
-                    panel: 'ندارد',
-                    banned: false,
-                    banUntil: null
-                };
-
-                this.users.push(newUser);
-                localStorage.setItem('game_users', JSON.stringify(this.users));
-                
-                this.currentUser = newUser;
-                localStorage.setItem('current_user', JSON.stringify(this.currentUser));
-                
-                this.startGame();
-            },
-
-            startGame() {
-                this.showPage('gamePage');
-                const jobColor = this.getJobColor(this.currentUser.job);
-                
-                document.getElementById('coinDisplay').textContent = this.currentUser.coin;
-                document.getElementById('idDisplay').textContent = this.currentUser.id;
-                document.getElementById('idDisplay2').textContent = this.currentUser.id;
-                document.getElementById('playerNameDisplay').textContent = this.currentUser.name;
-                document.getElementById('jobDisplay').textContent = this.currentUser.job;
-                document.getElementById('jobDisplay').style.background = jobColor;
-                
-                // بررسی پنل بازرسی
-                this.updateInspectorButton();
-                
-                this.initJoystick();
-            },
-
-            initJoystick() {
-                const joystick = document.getElementById('joystick');
-                const player = document.getElementById('player');
-                let isDragging = false;
-
-                const movePlayer = (e) => {
-                    if (!isDragging) return;
-                    e.preventDefault();
-
-                    const touch = e.touches ? e.touches[0] : e;
-                    const gameWorld = document.getElementById('gameWorld');
-                    const rect = gameWorld.getBoundingClientRect();
-
-                    let x = touch.clientX - rect.left - 20;
-                    let y = touch.clientY - rect.top - 20;
-
-                    x = Math.max(0, Math.min(rect.width - 40, x));
-                    y = Math.max(0, Math.min(rect.height - 40, y));
-
-                    player.style.left = x + 'px';
-                    player.style.top = y + 'px';
-                };
-
-                joystick.addEventListener('touchstart', () => isDragging = true);
-                joystick.addEventListener('mousedown', () => isDragging = true);
-                document.addEventListener('touchmove', movePlayer);
-                document.addEventListener('mousemove', movePlayer);
-                document.addEventListener('touchend', () => isDragging = false);
-                document.addEventListener('mouseup', () => isDragging = false);
-            },
-
-            copyId() {
-                if (this.currentUser) {
-                    this.copyToClipboard(this.currentUser.id);
-                }
-            },
-
-            copyInfoId() {
-                const id = document.getElementById('infoId').textContent;
-                this.copyToClipboard(id);
-            },
-
-            // ===== پنل بازرسی درون بازی =====
-            updateInspectorButton() {
-                const isInspector = this.currentUser && this.currentUser.panel === 'بازرس';
-                document.getElementById('inspectorToggle').style.display = isInspector ? 'flex' : 'none';
-                if (isInspector) {
-                    this.loadInspectorList();
-                }
-            },
-
-            toggleInspectorPanel() {
-                const panel = document.getElementById('inspectorGamePanel');
-                panel.classList.toggle('active');
-                if (panel.classList.contains('active')) {
-                    this.loadInspectorList();
-                }
-            },
-
-            hideInspectorPanel() {
-                document.getElementById('inspectorGamePanel').classList.remove('active');
-            },
-
-            loadInspectorList() {
-                const listDiv = document.getElementById('inspectorList');
-                const inspectors = this.users.filter(u => u.panel === 'بازرس' && !this.isUserBanned(u));
-                
-                if (inspectors.length === 0) {
-                    listDiv.innerHTML = '<div style="color: #999; text-align: center;">بازرسی وجود ندارد</div>';
-                    return;
-                }
-
-                let html = '';
-                inspectors.forEach(inspector => {
-                    html += `
-                        <div class="inspector-item">
-                            <div>
-                                <strong>${inspector.name}</strong><br>
-                                <span style="font-size: 9px;">${inspector.id}</span>
-                            </div>
-                            <button class="inspector-remove" onclick="gameUI.removeInspector('${inspector.id}')">برکناری</button>
-                        </div>
-                    `;
-                });
-                listDiv.innerHTML = html;
-            },
-
-            removeInspector(userId) {
-                const userIndex = this.users.findIndex(u => u.id === userId);
-                if (userIndex !== -1) {
-                    this.users[userIndex].panel = 'ندارد';
-                    localStorage.setItem('game_users', JSON.stringify(this.users));
-                    
-                    this.addInspectorLog('برکناری بازرس', userId);
-                    
-                    alert('بازرس برکنار شد');
-                    this.loadInspectorList();
-                    
-                    if (this.currentUser && this.currentUser.id === userId) {
-                        this.currentUser.panel = 'ندارد';
-                        localStorage.setItem('current_user', JSON.stringify(this.currentUser));
-                        this.updateInspectorButton();
-                    }
-                }
-            },
-
-            addInspectorLog(action, targetId) {
-                const log = {
-                    time: new Date().toISOString(),
-                    action: action,
-                    inspector: this.currentUser?.name || 'سیستم',
-                    target: targetId
-                };
-                this.inspectorLogs.unshift(log);
-                if (this.inspectorLogs.length > 50) this.inspectorLogs.pop();
-                localStorage.setItem('inspector_logs', JSON.stringify(this.inspectorLogs));
-            },
-
-            // ===== اطلاعات کاربر =====
-            showPlayerInfo() {
-                if (!this.currentUser) return;
-                document.getElementById('infoId').textContent = this.currentUser.id;
-                document.getElementById('infoCoin').textContent = this.currentUser.coin;
-                document.getElementById('infoJob').textContent = this.currentUser.job;
-                document.getElementById('infoPanel').textContent = this.currentUser.panel;
-                document.getElementById('infoModal').classList.add('active');
-            },
-
-            hideInfoModal() {
-                document.getElementById('infoModal').classList.remove('active');
-            },
-
-            // ===== پنل سازنده =====
-            showPanelModal() {
-                document.getElementById('panelModal').classList.add('active');
-                document.getElementById('panelPassword').value = '';
-                document.getElementById('passwordError').style.display = 'none';
-            },
-
-            hidePanelModal() {
-                document.getElementById('panelModal').classList.remove('active');
-            },
-
-            async checkPanelPassword() {
-                const password = document.getElementById('panelPassword').value;
-                const hash = await this.sha256(password);
-                
-                if (hash === this.HASHED_PASSWORD) {
-                    this.hidePanelModal();
-                    this.showPage('panelPage');
-                    this.updatePanelData();
-                } else {
-                    document.getElementById('passwordError').style.display = 'block';
-                    document.getElementById('passwordError').textContent = 'رمز اشتباه است!';
-                }
-            },
-
-            switchPanelTab(tab) {
-                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-                document.querySelectorAll('.panel-tab').forEach(content => content.classList.remove('active'));
-                
-                if (tab === 'users') {
-                    document.querySelectorAll('.tab-button')[0].classList.add('active');
-                    document.getElementById('usersTab').classList.add('active');
-                    this.updateUsersList();
-                } else if (tab === 'inspectors') {
-                    document.querySelectorAll('.tab-button')[1].classList.add('active');
-                    document.getElementById('inspectorsTab').classList.add('active');
-                    this.updateInspectorsList();
-                } else if (tab === 'jobs') {
-                    document.querySelectorAll('.tab-button')[2].classList.add('active');
-                    document.getElementById('jobsTab').classList.add('active');
-                    this.updateJobsPanel();
-                }
-            },
-
-            updatePanelData() {
-                const total = this.users.length;
-                const online = this.users.filter(u => !this.isUserBanned(u)).length;
-                
-                document.getElementById('totalPlayers').textContent = total;
-                document.getElementById('onlinePlayers').textContent = online;
-                
-                this.updateUsersList();
-                this.updateInspectorsList();
-                this.updateJobsPanel();
-            },
-
-            searchUsers() {
-                this.updateUsersList();
-            },
-
-            updateUsersList() {
-                const usersList = document.getElementById('usersList');
-                const searchTerm = document.getElementById('searchUser')?.value.toLowerCase() || '';
-                
-                usersList.innerHTML = '';
-
-                const filteredUsers = this.users.filter(user => 
-                    user.name.toLowerCase().includes(searchTerm) || 
-                    user.id.toLowerCase().includes(searchTerm)
-                );
-
-                filteredUsers.forEach((user) => {
-                    const userIndex = this.users.findIndex(u => u.id === user.id);
-                    
-                    const card = document.createElement('div');
-                    card.className = `user-card ${user.panel === 'بازرس' ? 'inspector' : ''}`;
-                    
-                    card.innerHTML = `
-                        <div class="user-header">
-                            <span class="user-id" onclick="gameUI.copyToClipboard('${user.id}')">${user.id}</span>
-                            <span>${user.name}</span>
-                        </div>
-                        <div class="input-row">
-                            <label>💰</label>
-                            <input type="number" id="coin_${userIndex}" value="${user.coin}">
-                        </div>
-                        <div class="input-row">
-                            <label>💼</label>
-                            <input type="text" id="job_${userIndex}" value="${user.job}" style="flex: 2;">
-                            <input type="color" id="color_${userIndex}" class="color-picker" value="${this.getJobColor(user.job)}">
-                        </div>
-                        <div class="input-row">
-                            <label>👑</label>
-                            <select id="panel_${userIndex}">
-                                <option value="ندارد" ${user.panel === 'ندارد' ? 'selected' : ''}>ندارد</option>
-                                <option value="بازرس" ${user.panel === 'بازرس' ? 'selected' : ''}>بازرس</option>
-                                <option value="ویژه" ${user.panel === 'ویژه' ? 'selected' : ''}>ویژه</option>
-                                <option value="پشتیبان" ${user.panel === 'پشتیبان' ? 'selected' : ''}>پشتیبان</option>
-                                <option value="ادمین" ${user.panel === 'ادمین' ? 'selected' : ''}>ادمین</option>
-                            </select>
-                        </div>
-                        <div class="action-buttons">
-                            <button class="btn btn-success" onclick="gameUI.saveUserChanges(${userIndex})">💾 ذخیره</button>
-                            ${!user.banned ? 
-                                `<button class="btn btn-danger" onclick="gameUI.banUser(${userIndex})">🔨 بن</button>` :
-                                `<button class="btn btn-success" onclick="gameUI.unbanUser(${userIndex})">🔓 آنبن</button>`
-                            }
-                        </div>
-                    `;
-                    usersList.appendChild(card);
-                });
-            },
-
-            saveUserChanges(index) {
-                const coin = document.getElementById(`coin_${index}`).value;
-                const job = document.getElementById(`job_${index}`).value;
-                const color = document.getElementById(`color_${index}`).value;
-                const panel = document.getElementById(`panel_${index}`).value;
-                const oldPanel = this.users[index].panel;
-
-                if (job !== 'بیکار' && job !== 'آشپز' && job !== 'کارمند') {
-                    this.customJobs[job] = color;
-                    localStorage.setItem('custom_jobs', JSON.stringify(this.customJobs));
-                }
-
-                this.users[index].coin = parseInt(coin);
-                this.users[index].job = job;
-                this.users[index].panel = panel;
-
-                localStorage.setItem('game_users', JSON.stringify(this.users));
-                
-                alert('تغییرات ذخیره شد!');
-                
-                if (this.currentUser && this.currentUser.id === this.users[index].id) {
-                    this.currentUser = this.users[index];
-                    localStorage.setItem('current_user', JSON.stringify(this.currentUser));
-                    if (document.getElementById('coinDisplay')) {
-                        document.getElementById('coinDisplay').textContent = this.currentUser.coin;
-                        document.getElementById('jobDisplay').textContent = this.currentUser.job;
-                        document.getElementById('jobDisplay').style.background = this.getJobColor(this.currentUser.job);
-                        this.updateInspectorButton();
-                    }
-                }
-
-                if (panel === 'بازرس' && oldPanel !== 'بازرس') {
-                    this.addInspectorLog('افزودن بازرس جدید', this.users[index].id);
-                }
-
-                this.updatePanelData();
-            },
-
-            banUser(index) {
-                const hours = prompt('مدت زمان بن (ساعت):', '24');
-                if (!hours) return;
-                
-                const banUntil = new Date();
-                banUntil.setHours(banUntil.getHours() + parseInt(hours));
-                
-                this.users[index].banned = true;
-                this.users[index].banUntil = banUntil.toISOString();
-
-                localStorage.setItem('game_users', JSON.stringify(this.users));
-                
-                alert(`کاربر ${this.users[index].name} بن شد!`);
-                
-                if (this.currentUser && this.currentUser.id === this.users[index].id) {
-                    this.currentUser = null;
-                    localStorage.removeItem('current_user');
-                }
-                
-                this.updatePanelData();
-            },
-
-            unbanUser(index) {
-                this.users[index].banned = false;
-                this.users[index].banUntil = null;
-                
-                localStorage.setItem('game_users', JSON.stringify(this.users));
-                
-                alert(`کاربر ${this.users[index].name} آنبن شد!`);
-                this.updatePanelData();
-            },
-
-            updateInspectorsList() {
-                const inspectorsList = document.getElementById('inspectorsList');
-                const inspectors = this.users.filter(u => u.panel === 'بازرس');
-                
-                document.getElementById('totalInspectors').textContent = inspectors.length;
-                document.getElementById('activeInspectors').textContent = inspectors.filter(u => !this.isUserBanned(u)).length;
-                
-                if (inspectors.length === 0) {
-                    inspectorsList.innerHTML = '<p style="color: #666; text-align: center;">هیچ بازرسی وجود ندارد</p>';
-                    return;
-                }
-
-                let html = '';
-                inspectors.forEach(inspector => {
-                    const status = this.isUserBanned(inspector) ? '🚫 بن شده' : '✅ فعال';
-                    html += `
-                        <div class="user-card inspector">
-                            <div class="user-header">
-                                <span class="user-id" onclick="gameUI.copyToClipboard('${inspector.id}')">${inspector.id}</span>
-                                <span>${inspector.name}</span>
-                            </div>
-                            <div style="margin: 5px 0;">
-                                <span style="background: ${this.getJobColor(inspector.job)}; color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px;">${inspector.job}</span>
-                            </div>
-                            <div style="font-size: 12px; margin-bottom: 10px;">وضعیت: ${status}</div>
-                            <div class="action-buttons">
-                                <button class="btn btn-danger" onclick="gameUI.removeInspector('${inspector.id}')">🔨 برکناری</button>
-                            </div>
-                        </div>
-                    `;
-                });
-                inspectorsList.innerHTML = html;
-            },
-
-            updateJobsPanel() {
-                const jobsContent = document.getElementById('jobsContent');
-                
-                const defaultJobs = [
-                    { name: 'بیکار', color: '#f44336' },
-                    { name: 'آشپز', color: '#4CAF50' },
-                    { name: 'کارمند', color: '#2196F3' }
-                ];
-                
-                let html = '';
-
-                defaultJobs.forEach(job => {
-                    const players = this.users.filter(u => u.job === job.name);
-                    html += `
-                        <div class="job-section">
-                            <div class="job-header" style="background: ${job.color};">
-                                <span>${job.name}</span>
-                                <span style="background: rgba(255,255,255,0.3); padding: 3px 10px; border-radius: 20px;">${players.length}</span>
-                            </div>
-                            <div style="margin-top: 10px;">
-                                ${players.map(p => `<span class="player-tag">${p.name}</span>`).join('') || '<span style="color: #999;">بازیکنی وجود ندارد</span>'}
-                            </div>
-                        </div>
-                    `;
-                });
-
-                const customJobsList = Object.keys(this.customJobs);
-                if (customJobsList.length > 0) {
-                    html += '<h4 style="margin: 20px 0 10px;">✨ شغل‌های سفارشی:</h4>';
-                    
-                    customJobsList.forEach(job => {
-                        const players = this.users.filter(u => u.job === job);
-                        if (players.length > 0) {
-                            html += `
-                                <div class="job-section">
-                                    <div class="job-header" style="background: ${this.customJobs[job]};">
-                                        <span>${job}</span>
-                                        <span style="background: rgba(255,255,255,0.3); padding: 3px 10px; border-radius: 20px;">${players.length}</span>
-                                    </div>
-                                    <div style="margin-top: 10px;">
-                                        ${players.map(p => `<span class="player-tag">${p.name}</span>`).join('')}
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    });
-                }
-
-                jobsContent.innerHTML = html || '<p style="color: #666; text-align: center;">هیچ شغلی وجود ندارد</p>';
+    // ---------- توابع ترجمه و تنظیمات ----------
+    function t(key, ...args) {
+        let txt = translations[currentLang]?.[key] || translations.fa[key];
+        return typeof txt === 'function' ? txt(...args) : txt || key;
+    }
+    function updateAllTexts() {
+        document.querySelectorAll("[data-key]").forEach(el => {
+            let k = el.getAttribute("data-key");
+            if (k && translations[currentLang]?.[k]) {
+                if (el.placeholder !== undefined) el.placeholder = t(k);
+                else el.innerHTML = t(k);
             }
-        };
+        });
+        document.getElementById("gameTitle").innerText = t("gameTitle");
+        document.getElementById("clickCircleText").innerText = t("clickCircleText");
+        document.getElementById("loginId").placeholder = currentLang === "en" ? "ID (lowercase)" : "شناسه (حروف کوچک)";
+        document.getElementById("loginPass").placeholder = currentLang === "en" ? "Password" : "رمز عبور";
+        let m = document.getElementById("clickMsg");
+        if (m && (m.innerText.includes("روی دایره") || m.innerText.includes("Tap circle"))) m.innerText = t("defaultMsg");
+    }
+    function changeLanguage(l) { currentLang = l; localStorage.setItem("gameLang", l); updateAllTexts(); }
+    function loadSettings() {
+        let t = localStorage.getItem("gameTheme") || "light";
+        document.getElementById("themeSelect").value = t; applyTheme(t);
+        let l = localStorage.getItem("gameLang") || "fa";
+        document.getElementById("languageSelect").value = l; changeLanguage(l);
+    }
+    function applyTheme(t) {
+        if (t === "dark") { document.body.classList.add("dark-mode"); document.body.classList.remove("light-mode"); }
+        else { document.body.classList.add("light-mode"); document.body.classList.remove("dark-mode"); }
+    }
+    function saveSettings() {
+        let t = document.getElementById("themeSelect").value, l = document.getElementById("languageSelect").value;
+        localStorage.setItem("gameTheme", t); localStorage.setItem("gameLang", l);
+        applyTheme(t); if (l !== currentLang) changeLanguage(l);
+        showGameMsg(t("settingsSaved"), "#aaffaa88"); closeAllPanels();
+    }
+    function resetToDefaultSettings() {
+        localStorage.setItem("gameTheme", "light"); localStorage.setItem("gameLang", "fa");
+        applyTheme("light"); changeLanguage("fa");
+        document.getElementById("themeSelect").value = "light"; document.getElementById("languageSelect").value = "fa";
+        showGameMsg(t("settingsReset"), "#aaffaa88"); closeAllPanels();
+    }
 
-        // بستن مودال با کلیک خارج
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.classList.remove('active');
-            }
+    // ---------- توابع اصلی کاربر ----------
+    function generateUserId() {
+        const chars = 'abcdefghijklmnopqrstuvwxyz';
+        let id;
+        do { id = ''; for (let i = 0; i < 6; i++) id += chars[Math.floor(Math.random() * chars.length)]; } while (players[id]);
+        return id;
+    }
+    function generatePassword() { return Math.floor(1000 + Math.random() * 9000).toString(); }
+    function saveToLocal() { localStorage.setItem("clickCoinGameV5", JSON.stringify(players)); }
+    function loadData() {
+        let s = localStorage.getItem("clickCoinGameV5");
+        if (s) try { players = JSON.parse(s); } catch (e) { players = {}; }
+        else players = {};
+    }
+    function autoSaveGameTime() {
+        if (currentUser && players[currentUser] && sessionStartTime) {
+            let e = Math.floor((Date.now() - sessionStartTime) / 1000);
+            if (e > 0) { players[currentUser].totalPlayTimeSec += e; sessionStartTime = Date.now(); saveToLocal(); updateGameUI(); }
+        }
+    }
+    function saveLastUser(u, p) { localStorage.setItem("lastUserId", u); localStorage.setItem("lastUserPass", p); }
+    function getLastUser() { let u = localStorage.getItem("lastUserId"), p = localStorage.getItem("lastUserPass"); return u && p ? { id: u, pass: p } : null; }
+    function clearLastUser() { localStorage.removeItem("lastUserId"); localStorage.removeItem("lastUserPass"); }
+    function removeInactiveAccounts() {
+        let n = Date.now(), changed = false;
+        for (let id in players) {
+            let l = players[id].lastLogin;
+            if (l && n - l > INACTIVE_DAYS * 86400000) { players[id].isBanned = true; changed = true; if (currentUser === id) logoutAndSave(); }
+        }
+        if (changed) saveToLocal();
+    }
+
+    function createAutoAccountAndLogin() {
+        let id = generateUserId(), pass = generatePassword();
+        players[id] = {
+            password: pass, kmCoins: 0, flCoins: 0, totalClicks: 0, totalPlayTimeSec: 0,
+            clickHourStart: Date.now(), clicksThisHour: 0, isBanned: false, lastLogin: Date.now(), lastSpinTimestamp: 0
         };
-    </script>
+        saveToLocal(); saveLastUser(id, pass);
+        showAuthMsg(t("accountCreated", id, pass), 5000);
+        currentUser = id; sessionStartTime = Date.now();
+        document.getElementById("authSection").classList.add("hidden");
+        document.getElementById("gameSection").classList.remove("hidden");
+        closeAllPanels();
+        document.getElementById("playerId").innerText = currentUser;
+        document.getElementById("playerPass").innerText = players[currentUser].password;
+        showGameMsg(t("welcome", id), "#aaffaa88");
+        updateGameUI(); startUITimer(); startAutoSaveTimer(); canClick = true;
+    }
+    function manualLogin(u, p) {
+        if (!u || !p) { showAuthMsg(t("enterCredentials")); return false; }
+        u = u.toLowerCase(); let pl = players[u];
+        if (pl && pl.password === p) {
+            let now = Date.now();
+            if (pl.lastLogin && now - pl.lastLogin > INACTIVE_DAYS * 86400000) { pl.isBanned = true; saveToLocal(); showAuthMsg(t("inactiveBan")); return false; }
+            if (pl.isBanned) { showAuthMsg(t("userBanned")); return false; }
+            currentUser = u; sessionStartTime = now; pl.lastLogin = now; saveToLocal(); saveLastUser(u, p);
+            document.getElementById("authSection").classList.add("hidden");
+            document.getElementById("gameSection").classList.remove("hidden");
+            closeAllPanels();
+            document.getElementById("playerId").innerText = currentUser;
+            document.getElementById("playerPass").innerText = players[currentUser].password;
+            showGameMsg(t("welcomeBack", u), "#aaffaa88");
+            updateGameUI(); startUITimer(); startAutoSaveTimer(); canClick = true;
+            return true;
+        } else { showAuthMsg(t("invalidCredentials")); return false; }
+    }
+    function autoLogin() {
+        let last = getLastUser();
+        if (last) {
+            let p = players[last.id];
+            if (p && p.password === last.pass && !p.isBanned) {
+                let now = Date.now();
+                if (p.lastLogin && now - p.lastLogin > INACTIVE_DAYS * 86400000) { p.isBanned = true; saveToLocal(); clearLastUser(); return false; }
+                currentUser = last.id; sessionStartTime = now; p.lastLogin = now; saveToLocal();
+                document.getElementById("authSection").classList.add("hidden");
+                document.getElementById("gameSection").classList.remove("hidden");
+                closeAllPanels();
+                document.getElementById("playerId").innerText = currentUser;
+                document.getElementById("playerPass").innerText = players[currentUser].password;
+                showGameMsg(t("autoLoginWelcome", currentUser), "#aaffaa88");
+                updateGameUI(); startUITimer(); startAutoSaveTimer(); canClick = true;
+                return true;
+            } else clearLastUser();
+        }
+        return false;
+    }
+    function logoutAndSave() {
+        if (currentUser && players[currentUser] && sessionStartTime) {
+            let e = Math.floor((Date.now() - sessionStartTime) / 1000);
+            if (e > 0) { players[currentUser].totalPlayTimeSec += e; saveToLocal(); }
+        }
+        currentUser = null; sessionStartTime = null; canClick = true;
+        document.getElementById("gameSection").classList.add("hidden");
+        document.getElementById("authSection").classList.remove("hidden");
+        closeAllPanels();
+        if (intervalTimer) clearInterval(intervalTimer);
+        if (autoSaveTimer) clearInterval(autoSaveTimer);
+    }
+
+    // ---------- منطق کلیک ----------
+    function resetHourIfNeeded(p) {
+        let n = Date.now();
+        if (!p.clickHourStart || n - p.clickHourStart >= 3600000) { p.clickHourStart = n; p.clicksThisHour = 0; return true; }
+        return false;
+    }
+    function createRipple(e, target) {
+        let rect = target.getBoundingClientRect();
+        let x = e.clientX - rect.left, y = e.clientY - rect.top;
+        let ripple = document.createElement("span");
+        ripple.className = "ripple";
+        ripple.style.left = x + "px";
+        ripple.style.top = y + "px";
+        target.style.overflow = "hidden";
+        target.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 500);
+    }
+    function attemptClick(e) {
+        if (!currentUser) return false;
+        if (!canClick) { showGameMsg(t("clickWait"), "#ffaa66"); return false; }
+        let p = players[currentUser];
+        if (!p || p.isBanned) { if (p && p.isBanned) showGameMsg(t("accountBanned"), "#ff6666"); return false; }
+        resetHourIfNeeded(p);
+        let remaining = HOURLY_LIMIT - (p.clicksThisHour || 0);
+        if (remaining <= 0) { showGameMsg(t("hourlyLimitReached"), "#ff9966"); return false; }
+        p.clicksThisHour++; p.totalClicks++; p.kmCoins = (p.kmCoins || 0) + 1;
+        saveToLocal(); updateGameUI(); showGameMsg(t("coinEarned"), "#aaffaa88");
+        if (navigator.vibrate) navigator.vibrate(30);
+        canClick = false; const circle = document.getElementById("clickCircle");
+        circle.classList.add("disabled-circle");
+        setTimeout(() => {
+            canClick = true;
+            circle.classList.remove("disabled-circle");
+            let pa = players[currentUser];
+            if (pa && !pa.isBanned) showGameMsg(t("readyNext"), "#ccffcc88");
+        }, 1000);
+        return true;
+    }
+
+    // ---------- تبدیل ارز ----------
+    function convertKmToFl() {
+        if (!currentUser) return;
+        let p = players[currentUser], amt = parseInt(document.getElementById("convertKmAmount").value);
+        if (isNaN(amt) || amt <= 0 || !p || p.kmCoins < amt) { document.getElementById("exchangeMsg").innerText = t("exchangeError"); setTimeout(() => document.getElementById("exchangeMsg").innerText = "", 2000); return; }
+        let fl = Math.floor(amt / 1000);
+        if (fl === 0) { document.getElementById("exchangeMsg").innerText = t("exchangeError"); return; }
+        p.kmCoins -= fl * 1000; p.flCoins = (p.flCoins || 0) + fl;
+        saveToLocal(); updateGameUI();
+        document.getElementById("exchangeMsg").innerText = t("exchangeSuccess");
+        setTimeout(() => document.getElementById("exchangeMsg").innerText = "", 2000);
+        document.getElementById("convertKmAmount").value = "";
+    }
+    function convertFlToKm() {
+        if (!currentUser) return;
+        let p = players[currentUser], amt = parseInt(document.getElementById("convertFlAmount").value);
+        if (isNaN(amt) || amt <= 0 || !p || p.flCoins < amt) { document.getElementById("exchangeMsg").innerText = t("exchangeError"); return; }
+        p.flCoins -= amt; p.kmCoins = (p.kmCoins || 0) + amt * 700;
+        saveToLocal(); updateGameUI();
+        document.getElementById("exchangeMsg").innerText = t("exchangeSuccess");
+        setTimeout(() => document.getElementById("exchangeMsg").innerText = "", 2000);
+        document.getElementById("convertFlAmount").value = "";
+    }
+
+    // ---------- مینی‌گیم سنگ کاغذ قیچی ----------
+    function showMinigameMessage(msg, type) {
+        let div = document.getElementById("minigameResult");
+        if (!div) return;
+        div.classList.remove("msg-win", "msg-lose", "msg-draw");
+        div.classList.add(`msg-${type}`);
+        div.innerHTML = msg;
+        setTimeout(() => { div.classList.remove(`msg-${type}`); div.innerHTML = ""; }, 3000);
+    }
+    function playMinigame(choice) {
+        if (!currentUser) return;
+        let p = players[currentUser];
+        if (p.isBanned) { showGameMsg(t("accountBanned"), "#ff6666"); return; }
+        if (p.kmCoins < 100) { showMinigameMessage(t("minigameInsufficient"), "lose"); return; }
+        const opts = ["rock", "paper", "scissors"];
+        const bot = opts[Math.floor(Math.random() * 3)];
+        let result = "";
+        if (choice === bot) result = "draw";
+        else if ((choice === "rock" && bot === "scissors") || (choice === "paper" && bot === "rock") || (choice === "scissors" && bot === "paper")) result = "win";
+        else result = "lose";
+        const choiceMap = { rock: t("rock"), paper: t("paper"), scissors: t("scissors") };
+        let msg = "";
+        if (result === "win") { p.kmCoins += 300; msg = t("gameWin", choiceMap[choice], choiceMap[bot]); showMinigameMessage(msg, "win"); }
+        else if (result === "lose") { p.kmCoins -= 100; msg = t("gameLose", choiceMap[choice], choiceMap[bot]); showMinigameMessage(msg, "lose"); }
+        else { msg = t("gameDraw", choiceMap[choice], choiceMap[bot]); showMinigameMessage(msg, "draw"); }
+        saveToLocal(); updateGameUI();
+    }
+
+    // ---------- مینی‌گیم سوال و جواب ----------
+    const qBank = [
+        { text: { fa: "پایتخت ایران؟", en: "Iran's capital?" }, opts: { fa: ["تهران", "مشهد", "اصفهان", "شیراز"], en: ["Tehran", "Mashhad", "Isfahan", "Shiraz"] }, cor: 0 },
+        { text: { fa: "8×7؟", en: "8×7?" }, opts: { fa: ["48", "56", "64", "72"], en: ["48", "56", "64", "72"] }, cor: 1 },
+        { text: { fa: "کدام خزنده است؟", en: "Which is a reptile?" }, opts: { fa: ["قورباغه", "مار", "ماهی", "پرنده"], en: ["Frog", "Snake", "Fish", "Bird"] }, cor: 1 },
+        { text: { fa: "سیاره سرخ؟", en: "Red planet?" }, opts: { fa: ["مشتری", "زحل", "مریخ", "زهره"], en: ["Jupiter", "Saturn", "Mars", "Venus"] }, cor: 2 },
+        { text: { fa: "نویسنده شازده کوچولو؟", en: "Little Prince author?" }, opts: { fa: ["ویکتور هوگو", "آنتوان دو سنت‌اگزوپری", "چارلز دیکنز", "مارک تواین"], en: ["Victor Hugo", "Antoine de Saint-Exupéry", "Charles Dickens", "Mark Twain"] }, cor: 1 }
+    ];
+    let curQ = null;
+    function showQuizMessage(msg, type) {
+        let div = document.getElementById("quizResult");
+        if (!div) return;
+        div.classList.remove("msg-win", "msg-lose", "msg-draw");
+        div.classList.add(`msg-${type}`);
+        div.innerHTML = msg;
+        setTimeout(() => { div.classList.remove(`msg-${type}`); div.innerHTML = ""; }, 3000);
+    }
+    function loadNewQuestion() {
+        curQ = { ...qBank[Math.floor(Math.random() * qBank.length)] };
+        let q = curQ.text[currentLang] || curQ.text.fa;
+        let opts = curQ.opts[currentLang] || curQ.opts.fa;
+        document.getElementById("quizQuestion").innerHTML = q;
+        let cont = document.getElementById("quizAnswers");
+        cont.innerHTML = "";
+        opts.forEach((opt, i) => {
+            let btn = document.createElement("button");
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(i);
+            cont.appendChild(btn);
+        });
+        document.getElementById("quizResult").innerHTML = "";
+        document.getElementById("newQuestionBtn").classList.add("hidden");
+    }
+    function checkAnswer(sel) {
+        if (!currentUser) return;
+        let p = players[currentUser];
+        if (p.isBanned) { showGameMsg(t("accountBanned"), "#ff6666"); return; }
+        if (p.flCoins < 1) { showQuizMessage("⚠️ " + (currentLang === "fa" ? "سکه FL کافی ندارید! (نیاز 1 FL)" : "Not enough FL!"), "lose"); return; }
+        p.flCoins -= 1;
+        let isCorrect = (sel === curQ.cor);
+        if (isCorrect) { p.flCoins += 10; showQuizMessage("✅ +10 FL", "win"); }
+        else {
+            let correctAns = (curQ.opts[currentLang] || curQ.opts.fa)[curQ.cor];
+            showQuizMessage("❌ " + correctAns, "lose");
+        }
+        saveToLocal(); updateGameUI();
+        document.getElementById("newQuestionBtn").classList.remove("hidden");
+    }
+    function newQuestion() { loadNewQuestion(); }
+
+    // ---------- گردونه روزانه (بخش‌های مساوی) ----------
+    const SECTORS = [
+        { name: "1 FL", type: "fl", amount: 1 },
+        { name: "1 KM", type: "km", amount: 1 },
+        { name: "100 FL", type: "fl", amount: 100 },
+        { name: "10000 KM", type: "km", amount: 10000 },
+        { name: "شانس مجدد", type: "extra", amount: 0 },
+        { name: "پوچ", type: "nothing", amount: 0 },
+        { name: "پوچ", type: "nothing", amount: 0 }
+    ];
+    const SECTOR_COUNT = SECTORS.length;
+    const SECTOR_ANGLE = 360 / SECTOR_COUNT;
+    function buildWheel() {
+        const wheel = document.getElementById("wheel");
+        if (!wheel) return;
+        wheel.innerHTML = "";
+        const colors = ["#f44336", "#4caf50", "#ff9800", "#9c27b0", "#2196f3", "#ffeb3b", "#795548"];
+        for (let i = 0; i < SECTOR_COUNT; i++) {
+            const sector = document.createElement("div");
+            sector.className = "wheel-sector";
+            const rotate = i * SECTOR_ANGLE;
+            sector.style.transform = `rotate(${rotate}deg) skewY(${90 - SECTOR_ANGLE}deg)`;
+            sector.style.background = colors[i % colors.length];
+            sector.innerHTML = `<div style="position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transform: skewY(${-(90 - SECTOR_ANGLE)}deg) rotate(${SECTOR_ANGLE/2}deg); font-size: 11px; font-weight: bold; color: white; text-shadow: 0 0 2px black;">${SECTORS[i].name}</div>`;
+            wheel.appendChild(sector);
+        }
+    }
+    function canSpin(p) { let last = p.lastSpinTimestamp || 0; return (Date.now() - last) >= 86400000; }
+    async function spinWheel() {
+        if (!currentUser) return;
+        let p = players[currentUser];
+        if (p.isBanned) { showGameMsg(t("accountBanned"), "#ff6666"); return; }
+        if (!canSpin(p)) {
+            let rem = 86400000 - (Date.now() - (p.lastSpinTimestamp || 0));
+            let h = Math.floor(rem / 3600000), m = Math.floor((rem % 3600000) / 60000), s = Math.floor((rem % 60000) / 1000);
+            document.getElementById("spinResult").innerHTML = t("spinDailyLimit") + ` ${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            return;
+        }
+        const selectedIndex = Math.floor(Math.random() * SECTOR_COUNT);
+        const selectedSector = SECTORS[selectedIndex];
+        const targetCenter = selectedIndex * SECTOR_ANGLE + (SECTOR_ANGLE / 2);
+        const spins = 8 + Math.random() * 7;
+        const finalAngle = spins * 360 + (360 - targetCenter);
+        const wheel = document.getElementById("wheel");
+        wheel.style.transition = "transform 5s cubic-bezier(0.2, 0.9, 0.1, 1.05)";
+        wheel.style.transform = `rotate(${finalAngle}deg)`;
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        let msg = "", extraSpin = false;
+        if (selectedSector.type === "fl") { p.flCoins = (p.flCoins || 0) + selectedSector.amount; msg = t("spinRewardFL", selectedSector.amount); }
+        else if (selectedSector.type === "km") { p.kmCoins = (p.kmCoins || 0) + selectedSector.amount; msg = t("spinRewardKM", selectedSector.amount); }
+        else if (selectedSector.type === "extra") { msg = t("spinExtra"); extraSpin = true; }
+        else { msg = t("spinNothing"); }
+        p.lastSpinTimestamp = Date.now();
+        saveToLocal(); updateGameUI();
+        document.getElementById("spinResult").innerHTML = msg;
+        if (extraSpin) { delete p.lastSpinTimestamp; saveToLocal(); setTimeout(() => spinWheel(), 1500); }
+        updateSpinTimer();
+    }
+    function updateSpinTimer() {
+        if (!currentUser) return;
+        let p = players[currentUser];
+        let rem = 86400000 - (Date.now() - (p.lastSpinTimestamp || 0));
+        if (rem < 0) rem = 0;
+        let h = Math.floor(rem / 3600000), m = Math.floor((rem % 3600000) / 60000), s = Math.floor((rem % 60000) / 1000);
+        document.getElementById("spinTimer").innerHTML = t("spinTimerLabel") + ` ${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+    function startSpinTimer() { setInterval(() => { if (currentUser && players[currentUser]) updateSpinTimer(); }, 1000); }
+
+    // ---------- پنل ادمین ----------
+    function showAdminPanel() {
+        if (!adminAuthenticated) {
+            let p = prompt("🔐 رمز ادمین:");
+            if (p === ADMIN_PASSWORD) adminAuthenticated = true;
+            else { alert("رمز اشتباه"); return; }
+        }
+        renderAdminTable();
+        document.getElementById("adminPanel").classList.remove("hidden");
+        closeOtherPanels("adminPanel");
+    }
+    function renderAdminTable() {
+        let cont = document.getElementById("adminTableContainer");
+        if (!cont) return;
+        let html = `<table border="0"><tr><th>شناسه</th><th>رمز</th><th>KM</th><th>FL</th><th>کلیک کل</th><th>زمان</th><th>وضعیت</th></tr>`;
+        for (let [id, data] of Object.entries(players)) {
+            html += `<tr style="${data.isBanned ? 'background:#aa3a3a66' : ''}">
+                        <td>${id}</td><td>${data.password}</td><td>${data.kmCoins || 0}</td><td>${data.flCoins || 0}</td>
+                        <td>${data.totalClicks || 0}</td><td>${data.totalPlayTimeSec || 0}</td><td>${data.isBanned ? "⛔ مسدود" : "✅ فعال"}</td>
+                     </tr>`;
+        }
+        html += `${'<'+'/table>'}`;
+        cont.innerHTML = html;
+    }
+    function adminAddKm() { let t = document.getElementById("adminTargetUser").value.trim().toLowerCase(), a = parseInt(document.getElementById("adminAddKm").value); if (!t || isNaN(a) || a <= 0) { showAdminMsg("مقدار معتبر"); return; } if (players[t]) { players[t].kmCoins = (players[t].kmCoins || 0) + a; saveToLocal(); renderAdminTable(); if (currentUser === t) updateGameUI(); showAdminMsg(`${a} KM به ${t} اضافه شد`); } else showAdminMsg("کاربر یافت نشد"); }
+    function adminRemoveKm() { let t = document.getElementById("adminTargetUser").value.trim().toLowerCase(), a = parseInt(document.getElementById("adminRemoveKm").value); if (!t || isNaN(a) || a <= 0) { showAdminMsg("مقدار معتبر"); return; } if (players[t]) { players[t].kmCoins = (players[t].kmCoins || 0) - a; saveToLocal(); renderAdminTable(); if (currentUser === t) updateGameUI(); showAdminMsg(`${a} KM از ${t} کم شد`); } else showAdminMsg("کاربر یافت نشد"); }
+    function adminAddFl() { let t = document.getElementById("adminTargetUser").value.trim().toLowerCase(), a = parseInt(document.getElementById("adminAddFl").value); if (!t || isNaN(a) || a <= 0) { showAdminMsg("مقدار معتبر"); return; } if (players[t]) { players[t].flCoins = (players[t].flCoins || 0) + a; saveToLocal(); renderAdminTable(); if (currentUser === t) updateGameUI(); showAdminMsg(`${a} FL به ${t} اضافه شد`); } else showAdminMsg("کاربر یافت نشد"); }
+    function adminRemoveFl() { let t = document.getElementById("adminTargetUser").value.trim().toLowerCase(), a = parseInt(document.getElementById("adminRemoveFl").value); if (!t || isNaN(a) || a <= 0) { showAdminMsg("مقدار معتبر"); return; } if (players[t]) { players[t].flCoins = (players[t].flCoins || 0) - a; saveToLocal(); renderAdminTable(); if (currentUser === t) updateGameUI(); showAdminMsg(`${a} FL از ${t} کم شد`); } else showAdminMsg("کاربر یافت نشد"); }
+    function adminBanUser() { let t = document.getElementById("adminTargetUser").value.trim().toLowerCase(); if (!t) { showAdminMsg("نام کاربر"); return; } if (players[t]) { players[t].isBanned = true; saveToLocal(); if (currentUser === t) logoutAndSave(); renderAdminTable(); showAdminMsg(`کاربر ${t} بن شد`); } else showAdminMsg("یافت نشد"); }
+    function adminUnbanUser() { let t = document.getElementById("adminTargetUser").value.trim().toLowerCase(); if (!t) { showAdminMsg("نام کاربر"); return; } if (players[t]) { players[t].isBanned = false; saveToLocal(); renderAdminTable(); showAdminMsg(`بن ${t} برداشته شد`); } else showAdminMsg("یافت نشد"); }
+    function adminResetSpin() { let t = document.getElementById("adminTargetUser").value.trim().toLowerCase(); if (!t) { showAdminMsg("نام کاربر"); return; } if (players[t]) { delete players[t].lastSpinTimestamp; saveToLocal(); renderAdminTable(); showAdminMsg(t("spinResetAdmin")); } else showAdminMsg("یافت نشد"); }
+    function adminResetAllSpin() { for (let id in players) delete players[id].lastSpinTimestamp; saveToLocal(); renderAdminTable(); showAdminMsg("همه چرخش‌ها ریست شد"); }
+    function showAdminMsg(m) { let el = document.getElementById("adminMsg"); if (el) { el.innerText = m; setTimeout(() => el.innerText = "", 3000); } }
+    function closeAdminPanel() { document.getElementById("adminPanel").classList.add("hidden"); adminAuthenticated = false; }
+
+    // ---------- توابع UI عمومی ----------
+    function updateGameUI() {
+        if (!currentUser) return;
+        let p = players[currentUser];
+        if (!p) return;
+        document.getElementById("kmCount").innerText = p.kmCoins;
+        document.getElementById("flCount").innerText = p.flCoins;
+        document.getElementById("totalClicks").innerText = p.totalClicks;
+        document.getElementById("playerId").innerText = currentUser;
+        document.getElementById("playerPass").innerText = p.password;
+        resetHourIfNeeded(p);
+        let left = HOURLY_LIMIT - (p.clicksThisHour || 0);
+        if (left < 0) left = 0;
+        document.getElementById("clicksLeft").innerText = left;
+        const circle = document.getElementById("clickCircle");
+        if (left <= 0 || p.isBanned) circle.classList.add("disabled-circle");
+        else if (canClick && !p.isBanned) circle.classList.remove("disabled-circle");
+        let addSec = sessionStartTime ? Math.floor((Date.now() - sessionStartTime) / 1000) : 0;
+        document.getElementById("playTime").innerText = p.totalPlayTimeSec + addSec;
+        let now = Date.now(), resetTime = (!p.clickHourStart || now - p.clickHourStart >= 3600000) ? 0 : (3600000 - (now - p.clickHourStart));
+        if (resetTime < 0) resetTime = 0;
+        let secs = Math.ceil(resetTime / 1000), mins = Math.floor(secs / 60), sec = secs % 60;
+        document.getElementById("resetTimer").innerText = `${mins}:${sec < 10 ? '0' + sec : sec}`;
+        updateInfoPanel(); updateSpinTimer();
+    }
+    function updateInfoPanel() {
+        if (!currentUser) return;
+        let p = players[currentUser];
+        if (p) {
+            let tt = p.totalPlayTimeSec + (sessionStartTime ? Math.floor((Date.now() - sessionStartTime) / 1000) : 0);
+            document.getElementById("infoTotalTime").innerText = tt;
+            document.getElementById("infoTotalClicks").innerText = p.totalClicks;
+            document.getElementById("infoKmTotal").innerText = p.kmCoins;
+            document.getElementById("infoFlTotal").innerText = p.flCoins;
+        }
+    }
+    function startUITimer() { if (intervalTimer) clearInterval(intervalTimer); intervalTimer = setInterval(() => { if (currentUser && players[currentUser]) updateGameUI(); }, 1000); }
+    function startAutoSaveTimer() { if (autoSaveTimer) clearInterval(autoSaveTimer); autoSaveTimer = setInterval(autoSaveGameTime, 5000); }
+    function showGameMsg(m, b) { let d = document.getElementById("clickMsg"); if (d) { d.innerText = m; d.style.background = b || "#ffdd99"; setTimeout(() => { if (d.innerText === m) d.innerText = t("defaultMsg"); }, 1800); } }
+    function showAuthMsg(m, d = 2000) { let a = document.getElementById("authMsg"); if (a) { a.innerText = m; a.classList.remove("hidden"); setTimeout(() => { if (a.innerText === m) a.classList.add("hidden"); }, d); } }
+    function closeAllPanels() { ["infoPanel", "settingsPanel", "supportPanel", "exchangePanel", "minigamePanel", "spinPanel", "adminPanel"].forEach(id => document.getElementById(id).classList.add("hidden")); }
+    function copyToClipboard(t, type) { let ta = document.createElement("textarea"); ta.value = t; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta); showGameMsg(t("copySuccess", t(type)), "#aaffaa88"); }
+    function closeOtherPanels(except) { ["infoPanel", "settingsPanel", "supportPanel", "exchangePanel", "minigamePanel", "spinPanel", "adminPanel"].forEach(id => { if (id !== except) document.getElementById(id).classList.add("hidden"); }); }
+
+    // ---------- راه‌اندازی نهایی ----------
+    window.addEventListener("load", () => {
+        loadData(); loadSettings(); removeInactiveAccounts(); if (!autoLogin()) { }
+        buildWheel(); startSpinTimer();
+
+        document.getElementById("createAutoAccountBtn").onclick = createAutoAccountAndLogin;
+        document.getElementById("loginBtn").onclick = () => { let u = document.getElementById("loginId").value.trim().toLowerCase(), p = document.getElementById("loginPass").value.trim(); manualLogin(u, p); };
+        document.getElementById("showInfoBtn").onclick = () => { if (currentUser) { updateInfoPanel(); document.getElementById("infoPanel").classList.remove("hidden"); closeOtherPanels("infoPanel"); } else alert(t("enterCredentials")); };
+        document.getElementById("showSettingsBtn").onclick = () => { if (currentUser) { document.getElementById("settingsPanel").classList.remove("hidden"); closeOtherPanels("settingsPanel"); } else alert(t("enterCredentials")); };
+        document.getElementById("showSupportBtn").onclick = () => { if (currentUser) { document.getElementById("supportPanel").classList.remove("hidden"); closeOtherPanels("supportPanel"); } else alert(t("enterCredentials")); };
+        document.getElementById("showExchangeBtn").onclick = () => { if (currentUser) { document.getElementById("exchangePanel").classList.remove("hidden"); closeOtherPanels("exchangePanel"); } else alert(t("enterCredentials")); };
+        document.getElementById("showMiniGameBtn").onclick = () => { if (currentUser) { document.getElementById("minigamePanel").classList.remove("hidden"); closeOtherPanels("minigamePanel"); } else alert(t("enterCredentials")); };
+        document.getElementById("showSpinBtn").onclick = () => { if (currentUser) { document.getElementById("spinPanel").classList.remove("hidden"); closeOtherPanels("spinPanel"); updateSpinTimer(); } else alert(t("enterCredentials")); };
+        document.getElementById("showAdminBtn").onclick = () => { if (currentUser) showAdminPanel(); else alert(t("enterCredentials")); };
+        document.getElementById("closeInfoBtn").onclick = () => document.getElementById("infoPanel").classList.add("hidden");
+        document.getElementById("closeSettingsBtn").onclick = () => document.getElementById("settingsPanel").classList.add("hidden");
+        document.getElementById("closeSupportBtn").onclick = () => document.getElementById("supportPanel").classList.add("hidden");
+        document.getElementById("closeExchangeBtn").onclick = () => document.getElementById("exchangePanel").classList.add("hidden");
+        document.getElementById("closeMinigameBtn").onclick = () => document.getElementById("minigamePanel").classList.add("hidden");
+        document.getElementById("closeSpinBtn").onclick = () => document.getElementById("spinPanel").classList.add("hidden");
+        document.getElementById("closeAdminBtn").onclick = () => { document.getElementById("adminPanel").classList.add("hidden"); adminAuthenticated = false; };
+        document.getElementById("saveSettingsBtn").onclick = saveSettings;
+        document.getElementById("resetSettingsBtn").onclick = resetToDefaultSettings;
+        document.getElementById("doConvertKmToFlBtn").onclick = convertKmToFl;
+        document.getElementById("doConvertFlToKmBtn").onclick = convertFlToKm;
+        document.getElementById("choiceRock").onclick = () => playMinigame("rock");
+        document.getElementById("choicePaper").onclick = () => playMinigame("paper");
+        document.getElementById("choiceScissors").onclick = () => playMinigame("scissors");
+        document.getElementById("newQuestionBtn").onclick = newQuestion;
+        document.getElementById("doSpinBtn").onclick = spinWheel;
+        document.getElementById("adminAddKmBtn").onclick = adminAddKm;
+        document.getElementById("adminRemoveKmBtn").onclick = adminRemoveKm;
+        document.getElementById("adminAddFlBtn").onclick = adminAddFl;
+        document.getElementById("adminRemoveFlBtn").onclick = adminRemoveFl;
+        document.getElementById("adminResetSpinBtn").onclick = adminResetSpin;
+        document.getElementById("adminResetAllSpinBtn").onclick = adminResetAllSpin;
+        document.getElementById("adminBanUserBtn").onclick = adminBanUser;
+        document.getElementById("adminUnbanUserBtn").onclick = adminUnbanUser;
+        document.getElementById("themeSelect").addEventListener("change", (e) => applyTheme(e.target.value));
+        document.getElementById("languageSelect").addEventListener("change", (e) => changeLanguage(e.target.value));
+        document.getElementById("playerIdBox").addEventListener("click", () => { if (currentUser) copyToClipboard(currentUser, "copyIdText"); });
+        document.getElementById("playerPassBox").addEventListener("click", () => { if (currentUser && players[currentUser]) copyToClipboard(players[currentUser].password, "copyPassText"); });
+        let circle = document.getElementById("clickCircle");
+        circle.addEventListener("click", (e) => { e.stopPropagation(); if (!currentUser) return; let p = players[currentUser]; if (p && (HOURLY_LIMIT - (p.clicksThisHour || 0)) > 0) { createRipple(e, circle); attemptClick(); } else if (p) showGameMsg(t("hourlyLimitReached"), "#ff8866"); });
+        window.addEventListener("beforeunload", () => { if (currentUser && sessionStartTime && players[currentUser]) { let e = Math.floor((Date.now() - sessionStartTime) / 1000); if (e > 0) { players[currentUser].totalPlayTimeSec += e; saveToLocal(); } } });
+        // مدیریت تب‌های مینی‌گیم
+        const tabRPS = document.getElementById("tabRPS"), tabQuiz = document.getElementById("tabQuiz");
+        const rpsContent = document.getElementById("rpsContent"), quizContent = document.getElementById("quizContent");
+        tabRPS.onclick = () => { tabRPS.classList.add("active"); tabQuiz.classList.remove("active"); rpsContent.classList.remove("hidden"); quizContent.classList.add("hidden"); };
+        tabQuiz.onclick = () => { tabQuiz.classList.add("active"); tabRPS.classList.remove("active"); quizContent.classList.remove("hidden"); rpsContent.classList.add("hidden"); if (curQ === null) loadNewQuestion(); };
+    });
+</script>
 </body>
-    </html>
+                                           </html>
